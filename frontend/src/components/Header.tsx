@@ -16,7 +16,7 @@ export function Header({ onCta, onHome }: { onCta: (label: string) => void; onHo
           }}
         >
           <span className="wordmark__mark" aria-hidden="true" />
-          HANSTAY
+          FANSTAY
         </a>
         <div className="site-header__actions">
           <button

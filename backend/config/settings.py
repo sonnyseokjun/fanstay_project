@@ -1,13 +1,13 @@
 """
-HANSTAY 사전가입 백엔드 설정.
+FANSTAY 사전가입 백엔드 설정.
 
 로컬에서는 환경변수 없이 바로 실행된다(SQLite, DEBUG=True).
 배포 시에는 아래 환경변수로 값을 주입한다.
 
 - DJANGO_SECRET_KEY      필수(운영)
 - DJANGO_DEBUG           "true" / "false"
-- DJANGO_ALLOWED_HOSTS   콤마 구분 (예: "api.hanstay.com")
-- CORS_ALLOWED_ORIGINS   콤마 구분 (예: "https://hanstay.com")
+- DJANGO_ALLOWED_HOSTS   콤마 구분 (예: "api.fanstay.com")
+- CORS_ALLOWED_ORIGINS   콤마 구분 (예: "https://fanstay.com")
 - DATABASE_URL           미지정 시 로컬 SQLite (예: "postgres://user:pass@host:5432/db")
 """
 

@@ -61,20 +61,20 @@ export function HeroMap({ labels }: { labels: Content['hero']['map'] }) {
 
         {/* 도보 15분 반경 */}
         <g className="hero-map__radius">
-          <circle cx={CENTER.x} cy={CENTER.y} r="150" fill="var(--line2)" fillOpacity="0.08" />
+          <circle cx={CENTER.x} cy={CENTER.y} r="150" fill="var(--brand)" fillOpacity="0.08" />
           <circle
             cx={CENTER.x}
             cy={CENTER.y}
             r="150"
             fill="none"
-            stroke="var(--line2)"
+            stroke="var(--brand)"
             strokeWidth="2.5"
             strokeDasharray="2 7"
             strokeLinecap="round"
           />
         </g>
         <g className="hero-map__radius-label" transform={`translate(${CENTER.x} 46)`}>
-          <rect x="-50" y="-15" width="100" height="30" rx="15" fill="var(--white)" stroke="var(--line2)" strokeWidth="2" />
+          <rect x="-50" y="-15" width="100" height="30" rx="15" fill="var(--white)" stroke="var(--brand)" strokeWidth="2" />
           <text y="5" textAnchor="middle" className="hero-map__radius-text">
             {labels.radius}
           </text>

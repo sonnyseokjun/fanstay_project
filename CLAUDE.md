@@ -1,7 +1,9 @@
-# HANSTAY 프로젝트
+# FANSTAY 프로젝트
 
 중국 본토 20~30대를 대상으로 한 "서울 한 달 살기(30일 리빙팩)" 서비스.
 지금 단계는 샤오홍슈 광고 유입자의 반응을 측정하는 **사전가입 웹사이트**다.
+
+- 서비스 이름은 **FANSTAY**다 (이전 이름 HANSTAY). 저장소·폴더 이름 `hanstay_project`와 원본 자료 파일명은 그대로 둔다.
 
 - 서비스 정의·요구사항·미정 사항: `plan.md` (작업 전에 먼저 읽을 것)
 - 작업 지시 양식: `prompt_template.md`
@@ -10,6 +12,7 @@
 
 ```
 hanstay_project/
+├── .github/                 이슈 템플릿(ISSUE_TEMPLATE/), PR 템플릿
 ├── plan.md                  서비스 계획서 + 사전가입 사이트 요구사항
 ├── prompt_template.md       작업 지시 양식
 ├── frontend/                React 19 + TypeScript + Vite (원페이지 랜딩)
@@ -78,6 +81,7 @@ Windows 콘솔에서 한글 출력이 깨지면 `PYTHONIOENCODING=utf-8`을 앞�
 ### 디자인
 - 디자인 작업에는 `frontend-design` 스킬(`.claude/skills/frontend-design`)을 따른다.
 - 컨셉은 "서울 생활 지도"(지도 + 지하철 2호선). 토큰은 `styles.css` 맨 위 `:root`에 있다. 새 색을 즉흥적으로 추가하지 않는다.
+- 메인 컬러는 빨강(`--brand`, 버튼과 헤더·푸터 바는 `--brand-deep`)이다. 빨강 바 위의 버튼은 흰 바탕 + 빨강 글자로 반전한다. 초록(`--line2`)은 실제 지하철 2호선 표시(히어로 지도의 노선, 역 번호 배지)에만 쓴다.
 - 자동 애니메이션은 히어로 지도 하나뿐이다. 섹션마다 등장 효과를 넣지 않는다. `prefers-reduced-motion`을 지킨다.
 - 모바일 우선. 변경 후 390px과 1440px 폭에서 가로 스크롤이 생기지 않는지 확인한다.
 
@@ -89,6 +93,13 @@ Windows 콘솔에서 한글 출력이 깨지면 `PYTHONIOENCODING=utf-8`을 앞�
 ### 범위
 - 로그인, 결제, 실제 예약 기능은 만들지 않는다 (사전가입 단계).
 - 가입 혜택 문구, 호스팅, 도메인, 분석 도구는 아직 미정이다. `plan.md` 17번을 확인하고 임의로 정하지 않는다.
+
+## GitHub 작업 방식
+
+- 작업은 GitHub 이슈 단위로 하고, 이슈마다 브랜치를 만든다. `main`에 직접 커밋하지 않는다.
+- 이슈를 만들 때는 `.github/ISSUE_TEMPLATE/`의 `feature.md`(기능) 또는 `bug.md`(버그) 형식을 따른다.
+- PR 본문은 `.github/pull_request_template.md` 형식을 채운다. `closes #이슈번호`로 이슈를 연결한다.
+- 커밋과 push는 사용자가 요청할 때만 한다.
 
 ## 배포 (미정)
 

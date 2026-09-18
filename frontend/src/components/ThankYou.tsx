@@ -18,7 +18,7 @@ export function ThankYou({ result, onBack }: { result: SignupResult; onBack: () 
   const share = async () => {
     if (navigator.share) {
       try {
-        await navigator.share({ title: 'HANSTAY', text: t.thanks.shareText, url: shareUrl })
+        await navigator.share({ title: 'FANSTAY', text: t.thanks.shareText, url: shareUrl })
         return
       } catch (error) {
         if ((error as DOMException).name === 'AbortError') return

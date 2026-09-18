@@ -7,7 +7,7 @@ export function Footer() {
       <div className="site-footer__inner">
         <p className="wordmark wordmark--footer">
           <span className="wordmark__mark" aria-hidden="true" />
-          HANSTAY
+          FANSTAY
         </p>
         <p className="site-footer__tagline">{t.footer.tagline}</p>
         <p className="site-footer__note">{t.footer.note}</p>

@@ -4,7 +4,7 @@ import type { Content, Lang } from '../content/types'
 import zh from '../content/zh'
 
 const CONTENT: Record<Lang, Content> = { zh, ko }
-const STORAGE_KEY = 'hanstay.lang'
+const STORAGE_KEY = 'fanstay.lang'
 
 type LanguageState = { lang: Lang; t: Content; setLang: (lang: Lang) => void }
 

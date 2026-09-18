@@ -38,7 +38,7 @@ class PreRegistrationApiTests(APITestCase):
 
     def test_contact_only_is_enough(self):
         res = self.client.post(
-            URL, {"contact_type": "wechat", "contact": "hanstay_fan", "consent": True}, format="json"
+            URL, {"contact_type": "wechat", "contact": "fanstay_fan", "consent": True}, format="json"
         )
         self.assertEqual(res.status_code, 201)
 

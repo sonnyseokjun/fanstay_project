@@ -5,8 +5,8 @@ from django.urls import path
 from analytics.views import EventCreateView
 from signups.views import PreRegistrationCreateView
 
-admin.site.site_header = "HANSTAY 사전가입 관리"
-admin.site.site_title = "HANSTAY 관리"
+admin.site.site_header = "FANSTAY 사전가입 관리"
+admin.site.site_title = "FANSTAY 관리"
 
 
 def health(request):

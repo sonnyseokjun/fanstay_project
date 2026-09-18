@@ -34,7 +34,7 @@ class Command(BaseCommand):
         def rate(part, whole):
             return f"{part / whole * 100:.1f}%" if whole else "-"
 
-        self.stdout.write(f"[HANSTAY 반응 요약 · {period}]")
+        self.stdout.write(f"[FANSTAY 반응 요약 · {period}]")
         self.stdout.write(f"방문자 수(중복 제거)      {visitors}")
         self.stdout.write(f"페이지 조회 수            {page_views.count()}")
         self.stdout.write(f"사전가입 버튼 클릭 수     {cta_clicks.count()}  (클릭한 방문자 {clickers}, {rate(clickers, visitors)})")
