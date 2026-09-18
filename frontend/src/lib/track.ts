@@ -3,7 +3,7 @@ import { API_BASE } from './api'
 // 반응 측정: 방문(page_view)과 사전가입 버튼 클릭(cta_click)을 자체 백엔드에 기록한다.
 // 중국 본토에서 막히는 외부 분석 도구(구글 등)를 쓰지 않기 위해 직접 수집한다.
 
-const VISITOR_KEY = 'hanstay.visitor'
+const VISITOR_KEY = 'fanstay.visitor'
 let memoryVisitorId = ''
 
 function randomId() {

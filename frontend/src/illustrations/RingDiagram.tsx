@@ -11,8 +11,8 @@ export function RingDiagram({ layers, alt }: { layers: Content['solution']['laye
         cx="160"
         cy="160"
         r="104"
-        fill="var(--line2-soft)"
-        stroke="var(--line2)"
+        fill="var(--brand-soft)"
+        stroke="var(--brand)"
         strokeWidth="2.5"
         strokeDasharray="2 7"
         strokeLinecap="round"
@@ -36,7 +36,7 @@ export function RingDiagram({ layers, alt }: { layers: Content['solution']['laye
         [222, 208],
         [104, 206],
       ].map(([x, y]) => (
-        <circle key={`${x}-${y}`} cx={x} cy={y} r="4.5" fill="var(--white)" stroke="var(--line2)" strokeWidth="2.5" />
+        <circle key={`${x}-${y}`} cx={x} cy={y} r="4.5" fill="var(--white)" stroke="var(--brand)" strokeWidth="2.5" />
       ))}
 
       <text x="160" y="36" textAnchor="middle" className="ring-diagram__label">
