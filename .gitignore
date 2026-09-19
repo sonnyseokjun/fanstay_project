@@ -15,3 +15,6 @@ frontend/dist/
 # OS / editor
 .DS_Store
 Thumbs.db
+
+# 배포
+certs/

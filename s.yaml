@@ -1,0 +1,50 @@
+# Serverless Devs 배포 설정 — 알리바바 클라우드 Function Compute 3.0 (홍콩)
+#
+# 비밀값은 이 파일에 쓰지 않는다. 배포하는 터미널의 환경변수(.env.deploy)에서 읽는다.
+# 직접 `s deploy`를 부르지 말고 ./deploy.sh 를 쓴다 (이미지 빌드·업로드·배포를 한 번에).
+# 자세한 순서는 docs/deploy.md 참고.
+
+edition: 3.0.0
+name: fanstay
+access: fanstay # `s config add` 로 등록한 알리바바 AccessKey 별칭
+
+vars:
+  region: cn-hongkong
+
+resources:
+  fanstay-web:
+    component: fc3
+    props:
+      region: ${vars.region}
+      functionName: fanstay-web
+      description: FANSTAY 사전가입 사이트 (React + Django)
+      runtime: custom-container
+      # 사전가입 규모에 맞춘 최소 사양. 느리면 cpu/memorySize를 올린다.
+      cpu: 0.35
+      memorySize: 512
+      diskSize: 512
+      timeout: 60
+      # gunicorn 2 workers x 4 threads = 인스턴스당 동시 요청 8개
+      instanceConcurrency: 8
+      internetAccess: true # 외부 DB(Neon 등) 접속에 필요
+      customContainerConfig:
+        image: ${env('FANSTAY_IMAGE')}
+        port: 9000
+      environmentVariables:
+        DJANGO_SECRET_KEY: ${env('DJANGO_SECRET_KEY')}
+        DJANGO_ALLOWED_HOSTS: ${env('DJANGO_ALLOWED_HOSTS')}
+        CSRF_TRUSTED_ORIGINS: ${env('CSRF_TRUSTED_ORIGINS')}
+        DATABASE_URL: ${env('DATABASE_URL')}
+      # 요청·오류 로그를 Log Service(SLS)에 저장한다. 오류 알림은 이 로그에 건다 (docs/deploy.md 10단계).
+      logConfig: auto
+      triggers:
+        - triggerName: http
+          triggerType: http
+          triggerConfig:
+            authType: anonymous
+            disableURLInternet: false
+            methods:
+              - GET
+              - POST
+              - HEAD
+              - OPTIONS

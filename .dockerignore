@@ -1,0 +1,16 @@
+# 컨테이너에 넣지 않을 것: 비밀값, 로컬 DB, 의존성 폴더, 빌드 결과, 문서
+.git
+.github
+.claude
+.env
+.env.*
+**/__pycache__
+**/*.pyc
+backend/.venv
+backend/db.sqlite3
+backend/staticfiles
+frontend/node_modules
+frontend/dist
+docs
+*.md
+s.yaml

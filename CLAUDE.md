@@ -13,6 +13,9 @@
 ```
 hanstay_project/
 ├── .github/                 이슈 템플릿(ISSUE_TEMPLATE/), PR 템플릿
+├── docs/deploy.md           알리바바 클라우드 서버리스 배포 가이드
+├── Dockerfile               React 빌드 + Django를 담은 배포 컨테이너 (포트 9000)
+├── s.yaml, deploy.sh        Function Compute 배포 설정과 스크립트 (값은 .env.deploy)
 ├── plan.md                  서비스 계획서 + 사전가입 사이트 요구사항
 ├── prompt_template.md       작업 지시 양식
 ├── frontend/                React 19 + TypeScript + Vite (원페이지 랜딩)
@@ -26,7 +29,7 @@ hanstay_project/
 └── backend/                 Django 5.2 + DRF
     ├── config/              설정(환경변수 기반), URL
     ├── signups/             사전가입 모델·API·관리자
-    └── analytics/           page_view / cta_click 이벤트, `stats` 명령
+    └── analytics/           page_view / cta_click 이벤트, `stats` 명령, 관리자 통계 화면(/admin/stats/)
 ```
 
 ## 로컬 실행
@@ -92,7 +95,8 @@ Windows 콘솔에서 한글 출력이 깨지면 `PYTHONIOENCODING=utf-8`을 앞�
 
 ### 범위
 - 로그인, 결제, 실제 예약 기능은 만들지 않는다 (사전가입 단계).
-- 가입 혜택 문구, 호스팅, 도메인, 분석 도구는 아직 미정이다. `plan.md` 17번을 확인하고 임의로 정하지 않는다.
+- 가입 혜택 문구, 도메인 이름, 분석 도구는 아직 미정이다. `plan.md` 17번을 확인하고 임의로 정하지 않는다.
+- 비용이 발생하는 작업(유료 서비스 구매, 사양 상향, 최소 인스턴스 유지, CDN 추가 등)은 사용자 허락 없이 하지 않는다.
 
 ## GitHub 작업 방식
 
@@ -101,8 +105,11 @@ Windows 콘솔에서 한글 출력이 깨지면 `PYTHONIOENCODING=utf-8`을 앞�
 - PR 본문은 `.github/pull_request_template.md` 형식을 채운다. `closes #이슈번호`로 이슈를 연결한다.
 - 커밋과 push는 사용자가 요청할 때만 한다.
 
-## 배포 (미정)
+## 배포
 
-- 서버리스 배포 예정. 후보와 중국 본토 접속 고려사항은 `plan.md` 16번 참고.
-- 프론트는 `npm run build` 결과(`frontend/dist`)를 정적 호스팅에 올린다. API 도메인이 다르면 빌드 시 `VITE_API_BASE`를 지정한다.
-- 백엔드 운영 환경변수: `DJANGO_SECRET_KEY`, `DJANGO_DEBUG=false`, `DJANGO_ALLOWED_HOSTS`, `CORS_ALLOWED_ORIGINS`, `DATABASE_URL`
+- **알리바바 클라우드 국제판, 홍콩 리전(`cn-hongkong`), 서버리스만 사용.** 중국 본토 리전(ICP 비안 필요)은 쓰지 않는다.
+- 구성: Function Compute 3.0 커스텀 컨테이너 1개(React 빌드 + Django, WhiteNoise가 화면·정적 파일 제공) + ACR 개인판 + Neon PostgreSQL + 자체 도메인 + Let's Encrypt. CDN은 쓰지 않는다.
+- 배포: `./deploy.sh` (커밋 번호로 이미지 태그 → ACR 업로드 → `s deploy`). 롤백은 `./deploy.sh <태그>`. 전체 절차는 `docs/deploy.md`.
+- 운영 환경변수는 `.env.deploy`(git 제외, 양식은 `deploy.env.example`): `ACR_IMAGE_REPO`, `DJANGO_SECRET_KEY`, `DJANGO_ALLOWED_HOSTS`, `CSRF_TRUSTED_ORIGINS`, `DATABASE_URL`
+- 모델을 바꾸면 배포 전에 운영 DB에 `migrate`를 실행한다(`docs/deploy.md` 11번).
+- 컨테이너 실행 방식(포트, 환경변수, 빌드 단계)을 바꾸면 `Dockerfile`, `s.yaml`, `docs/deploy.md`를 함께 고친다.
