@@ -1,11 +1,6 @@
-from datetime import timedelta
-
 from django.core.management.base import BaseCommand
-from django.db.models import Count
-from django.utils import timezone
 
-from analytics.models import Event
-from signups.models import PreRegistration
+from analytics.stats import summarize
 
 
 class Command(BaseCommand):
@@ -15,33 +10,16 @@ class Command(BaseCommand):
         parser.add_argument("--days", type=int, help="최근 N일만 집계 (생략 시 전체 기간)")
 
     def handle(self, *args, days=None, **options):
-        events = Event.objects.all()
-        signups = PreRegistration.objects.all()
-        period = "전체 기간"
-        if days:
-            since = timezone.now() - timedelta(days=days)
-            events = events.filter(created_at__gte=since)
-            signups = signups.filter(created_at__gte=since)
-            period = f"최근 {days}일"
+        s = summarize(days)
+        self.stdout.write(f"[FANSTAY 반응 요약 · {s['period']}]")
+        self.stdout.write(f"방문자 수(중복 제거)      {s['visitors']}")
+        self.stdout.write(f"페이지 조회 수            {s['page_views']}")
+        self.stdout.write(
+            f"사전가입 버튼 클릭 수     {s['cta_clicks']}  (클릭한 방문자 {s['clickers']}, {s['click_rate']})"
+        )
+        self.stdout.write(f"사전가입 완료 수          {s['signups']}  (방문자 대비 {s['signup_rate']})")
 
-        page_views = events.filter(event_type=Event.Type.PAGE_VIEW)
-        cta_clicks = events.filter(event_type=Event.Type.CTA_CLICK)
-
-        visitors = page_views.values("visitor_id").distinct().count()
-        clickers = cta_clicks.values("visitor_id").distinct().count()
-        signup_count = signups.count()
-
-        def rate(part, whole):
-            return f"{part / whole * 100:.1f}%" if whole else "-"
-
-        self.stdout.write(f"[FANSTAY 반응 요약 · {period}]")
-        self.stdout.write(f"방문자 수(중복 제거)      {visitors}")
-        self.stdout.write(f"페이지 조회 수            {page_views.count()}")
-        self.stdout.write(f"사전가입 버튼 클릭 수     {cta_clicks.count()}  (클릭한 방문자 {clickers}, {rate(clickers, visitors)})")
-        self.stdout.write(f"사전가입 완료 수          {signup_count}  (방문자 대비 {rate(signup_count, visitors)})")
-
-        by_label = cta_clicks.values("label").annotate(n=Count("id")).order_by("-n")
-        if by_label:
+        if s["clicks_by_label"]:
             self.stdout.write("\n버튼 위치별 클릭 수")
-            for row in by_label:
-                self.stdout.write(f"  {row['label'] or '(없음)':<12} {row['n']}")
+            for row in s["clicks_by_label"]:
+                self.stdout.write(f"  {row['label']:<12} {row['n']}")

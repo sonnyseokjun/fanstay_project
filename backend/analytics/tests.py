@@ -1,9 +1,13 @@
 import json
 from io import StringIO
 
+from django.contrib.auth.models import User
 from django.core.cache import cache
 from django.core.management import call_command
+from django.test import TestCase
 from rest_framework.test import APITestCase
+
+from signups.models import PreRegistration
 
 from .models import Event
 
@@ -38,3 +42,37 @@ class EventApiTests(APITestCase):
         call_command("stats", stdout=out)
         self.assertRegex(out.getvalue(), r"방문자 수\(중복 제거\)\s+2")
         self.assertRegex(out.getvalue(), r"사전가입 버튼 클릭 수\s+1")
+
+
+class AdminStatsViewTests(TestCase):
+    def setUp(self):
+        self.staff = User.objects.create_superuser("staff", "staff@example.com", "pw-for-tests-only")
+
+    def test_requires_staff_login(self):
+        res = self.client.get("/admin/stats/")
+        self.assertEqual(res.status_code, 302)
+        self.assertIn("/admin/login/", res["Location"])
+
+    def test_shows_summary_and_survey(self):
+        Event.objects.create(event_type="page_view", visitor_id="v1")
+        Event.objects.create(event_type="page_view", visitor_id="v2")
+        Event.objects.create(event_type="cta_click", visitor_id="v1", label="hero")
+        PreRegistration.objects.create(
+            contact_type="email", contact="a@example.com", consent=True,
+            interest_areas=["seongsu", "hongdae"], budget_range="5k_8k", stay_days=30,
+        )
+        self.client.force_login(self.staff)
+        res = self.client.get("/admin/stats/?days=7")
+        self.assertEqual(res.status_code, 200)
+        s = res.context["s"]
+        self.assertEqual((s["visitors"], s["cta_clicks"], s["signups"]), (2, 1, 1))
+        self.assertEqual(s["signup_rate"], "50.0%")
+        self.assertContains(res, "성수")
+        self.assertContains(res, "¥5,000~8,000")
+        self.assertContains(res, "21~40일")
+
+    def test_ignores_unknown_period(self):
+        self.client.force_login(self.staff)
+        res = self.client.get("/admin/stats/?days=abc")
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(res.context["s"]["period"], "전체 기간")

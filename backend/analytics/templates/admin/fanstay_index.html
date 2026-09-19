@@ -1,0 +1,11 @@
+{% extends "admin/index.html" %}
+
+{% block content %}
+<div class="module" style="margin-bottom: 20px">
+  <h2>반응 통계</h2>
+  <p style="padding: 8px 12px; margin: 0">
+    <a href="{% url 'admin-stats' %}">방문자 · 버튼 클릭 · 사전가입 전환율과 설문 응답 보기 →</a>
+  </p>
+</div>
+{{ block.super }}
+{% endblock %}

@@ -1,0 +1,99 @@
+{% extends "admin/base_site.html" %}
+
+{% block extrastyle %}{{ block.super }}
+<style>
+  .stats-periods { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 20px; }
+  .stats-periods a { padding: 6px 12px; border: 1px solid var(--hairline-color); border-radius: 16px; }
+  .stats-periods a.active { background: var(--primary); border-color: var(--primary); color: var(--primary-fg); }
+  .stats-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; margin-bottom: 28px; }
+  .stats-card { padding: 14px 16px; border: 1px solid var(--hairline-color); border-radius: 6px; }
+  .stats-card__label { color: var(--body-quiet-color); font-size: 13px; }
+  .stats-card__value { margin-top: 4px; font-size: 28px; font-weight: 700; color: var(--body-fg); }
+  .stats-card__note { margin-top: 2px; color: var(--body-quiet-color); font-size: 12px; }
+  .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; }
+  .stats-block h2 { margin: 0 0 10px; font-size: 15px; }
+  .stats-bar { display: grid; grid-template-columns: 9em 1fr 5.5em; align-items: center; gap: 8px; margin: 6px 0; font-size: 13px; }
+  .stats-bar__track { display: block; height: 10px; border-radius: 5px; background: var(--darkened-bg); overflow: hidden; }
+  .stats-bar__fill { display: block; height: 100%; background: var(--primary); }
+  .stats-bar__n { text-align: right; color: var(--body-quiet-color); }
+  .stats-empty { color: var(--body-quiet-color); font-size: 13px; }
+  .stats-section { margin-top: 32px; }
+  .stats-section h2 { font-size: 15px; }
+  .stats-note { color: var(--body-quiet-color); font-size: 12px; }
+</style>
+{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs"><a href="{% url 'admin:index' %}">홈</a> › 반응 통계</div>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+  <nav class="stats-periods" aria-label="집계 기간">
+    {% for p in periods %}
+      <a href="?{% if p.days %}days={{ p.days }}{% endif %}"{% if p.active %} class="active" aria-current="true"{% endif %}>{{ p.label }}</a>
+    {% endfor %}
+  </nav>
+
+  <div class="stats-cards">
+    <div class="stats-card">
+      <div class="stats-card__label">방문자 수</div>
+      <div class="stats-card__value">{{ s.visitors }}</div>
+      <div class="stats-card__note">중복 제거 · 페이지 조회 {{ s.page_views }}</div>
+    </div>
+    <div class="stats-card">
+      <div class="stats-card__label">사전가입 버튼 클릭</div>
+      <div class="stats-card__value">{{ s.cta_clicks }}</div>
+      <div class="stats-card__note">클릭한 방문자 {{ s.clickers }} ({{ s.click_rate }})</div>
+    </div>
+    <div class="stats-card">
+      <div class="stats-card__label">사전가입 완료</div>
+      <div class="stats-card__value">{{ s.signups }}</div>
+      <div class="stats-card__note">방문자 대비 전환율 {{ s.signup_rate }}</div>
+    </div>
+  </div>
+
+  <div class="stats-grid">
+    <section class="stats-block">
+      <h2>버튼 위치별 클릭</h2>
+      {% for row in clicks %}
+        <div class="stats-bar">
+          <span>{{ row.label }}</span>
+          <span class="stats-bar__track"><span class="stats-bar__fill" style="width: {{ row.pct }}%"></span></span>
+          <span class="stats-bar__n">{{ row.n }} · {{ row.pct }}%</span>
+        </div>
+      {% empty %}
+        <p class="stats-empty">아직 클릭이 없습니다.</p>
+      {% endfor %}
+    </section>
+
+    {% for block in survey %}
+      <section class="stats-block">
+        <h2>{{ block.title }}</h2>
+        {% for row in block.rows %}
+          <div class="stats-bar">
+            <span>{{ row.label }}</span>
+            <span class="stats-bar__track"><span class="stats-bar__fill" style="width: {{ row.pct }}%"></span></span>
+            <span class="stats-bar__n">{{ row.n }} · {{ row.pct }}%</span>
+          </div>
+        {% empty %}
+          <p class="stats-empty">응답이 없습니다.</p>
+        {% endfor %}
+      </section>
+    {% endfor %}
+  </div>
+  <p class="stats-note">설문 항목의 %는 가입자 수 대비 비율입니다. 복수 선택 항목은 합이 100%를 넘을 수 있습니다.</p>
+
+  <section class="stats-section">
+    <h2>최근 {{ trend_days }}일 추이 (서울 시간)</h2>
+    <table>
+      <thead><tr><th>날짜</th><th>방문자</th><th>가입</th><th>전환율</th></tr></thead>
+      <tbody>
+        {% for row in trend reversed %}
+          <tr><td>{{ row.day|date:"Y-m-d (D)" }}</td><td>{{ row.visitors }}</td><td>{{ row.signups }}</td><td>{{ row.signup_rate }}</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </section>
+</div>
+{% endblock %}
