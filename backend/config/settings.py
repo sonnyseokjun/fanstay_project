@@ -6,11 +6,10 @@ FANSTAY 사전가입 백엔드 설정.
 
 - DJANGO_SECRET_KEY      필수(운영)
 - DJANGO_DEBUG           "true" / "false"
-- DJANGO_ALLOWED_HOSTS   콤마 구분 (예: "api.fanstay.com")
-- CORS_ALLOWED_ORIGINS   콤마 구분 (예: "https://fanstay.com"). 프론트와 API가 같은 도메인이면 불필요
-- CSRF_TRUSTED_ORIGINS   콤마 구분 (예: "https://fanstay.com"). 운영 관리자 로그인에 필요
-- DATABASE_URL           미지정 시 로컬 SQLite (예: "postgres://user:pass@host:5432/db?sslmode=require")
-- FRONTEND_DIST          프론트 빌드 폴더. 있으면 사이트 화면을 이 서버가 함께 제공 (컨테이너에서는 /app/frontend_dist)
+- DJANGO_ALLOWED_HOSTS   콤마 구분. 운영(Cloud Run)은 ".run.app"
+- CORS_ALLOWED_ORIGINS   콤마 구분. 프론트와 API가 같은 도메인이면 불필요(Firebase Hosting이 /api를 넘겨주므로 불필요)
+- CSRF_TRUSTED_ORIGINS   콤마 구분. 관리자 페이지를 다른 도메인으로 열 때만 필요
+- DATABASE_URL           미지정 시 로컬 SQLite (예: "postgresql://user:pass@host/db?sslmode=require")
 """
 
 import os
@@ -115,20 +114,10 @@ if not DEBUG:
         "staticfiles": {"BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage"},
     }
 
-# 사이트 화면: 프론트 빌드 결과(index.html, /assets/...)를 도메인 루트에서 제공한다.
-# 로컬 개발에서는 Vite(5173)를 쓰므로 비워 둔다.
-FRONTEND_DIST = os.environ.get("FRONTEND_DIST", "")
-if FRONTEND_DIST:
-    WHITENOISE_ROOT = FRONTEND_DIST
-    WHITENOISE_INDEX_FILE = True
-    # /assets/ 파일은 이름에 해시가 붙어 있어 오래 캐시해도 된다.
-    WHITENOISE_IMMUTABLE_FILE_TEST = r"^/assets/"
-
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 
-# 프론트엔드는 개발 시 Vite 프록시(/api)로 같은 출처에서 호출한다.
-# 배포 후 프론트와 API 도메인이 다르면 CORS_ALLOWED_ORIGINS에 프론트 주소를 넣는다.
+# 프론트엔드는 같은 출처의 /api를 호출한다 (개발: Vite 프록시, 운영: Firebase Hosting 리라이트).
 CORS_ALLOWED_ORIGINS = env_list("CORS_ALLOWED_ORIGINS")
 CSRF_TRUSTED_ORIGINS = env_list("CSRF_TRUSTED_ORIGINS")
 

@@ -10,21 +10,6 @@ from django.utils import timezone
 from analytics.models import Event
 from signups.models import PreRegistration
 
-# 폼 선택지 코드 → 관리자용 한국어 이름 (frontend/src/content/ko.ts와 같은 표현)
-AREA_LABELS = {"seongsu": "성수", "hongdae": "홍대", "gangnam": "강남", "hannam": "한남"}
-SERVICE_LABELS = {
-    "k_beauty": "피부과·K-뷰티",
-    "hair_salon": "헤어살롱",
-    "fitness": "피트니스",
-    "spa_wellness": "스파·웰니스",
-    "cooking_class": "한식 쿠킹 클래스",
-    "local_community": "취미 커뮤니티",
-    "airport_transfer": "공항 픽업·샌딩",
-    "sim_data": "유심·데이터",
-    "cleaning_laundry": "청소·세탁 대행",
-    "medical_support": "중국어 병원 이용 지원",
-}
-STAY_BUCKETS = [(1, 20, "20일 이하"), (21, 40, "21~40일"), (41, 70, "41~70일"), (71, 365, "71일 이상")]
 TREND_DAYS = 14
 
 
@@ -57,12 +42,10 @@ def summarize(days=None):
     clickers = cta_clicks.values("visitor_id").distinct().count()
     signup_count = signups.count()
 
-    areas, services, stays = Counter(), Counter(), Counter()
-    for row in signups.values("interest_areas", "interest_services", "stay_days"):
-        areas.update(row["interest_areas"])
-        services.update(row["interest_services"])
-        if row["stay_days"]:
-            stays.update(label for low, high, label in STAY_BUCKETS if low <= row["stay_days"] <= high)
+    countries, features = Counter(), Counter()
+    for row in signups.values("countries", "features"):
+        countries.update(row["countries"])
+        features.update(row["features"])
 
     return {
         "period": period,
@@ -77,13 +60,12 @@ def summarize(days=None):
             {"label": row["label"] or "(없음)", "n": row["n"]}
             for row in cta_clicks.values("label").annotate(n=Count("id")).order_by("-n")
         ],
-        "languages": _choice_counts(signups, "language", PreRegistration.Language.choices),
         "age_ranges": _choice_counts(signups, "age_range", PreRegistration.AgeRange.choices),
-        "visit_timings": _choice_counts(signups, "visit_timing", PreRegistration.VisitTiming.choices),
-        "budgets": _choice_counts(signups, "budget_range", PreRegistration.BudgetRange.choices),
-        "stay_days": [{"label": label, "n": stays[label]} for _, _, label in STAY_BUCKETS if stays[label]],
-        "areas": _ranked(areas, AREA_LABELS),
-        "services": _ranked(services, SERVICE_LABELS),
+        "countries": _ranked(countries, PreRegistration.COUNTRY_CHOICES),
+        "stay_types": _choice_counts(signups, "stay_type", PreRegistration.StayType.choices),
+        "timings": _choice_counts(signups, "timing", PreRegistration.Timing.choices),
+        "features": _ranked(features, PreRegistration.FEATURE_CHOICES),
+        "budgets": _choice_counts(signups, "budget_range", PreRegistration.Budget.choices),
     }
 
 

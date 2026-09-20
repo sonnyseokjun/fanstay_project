@@ -1,55 +1,46 @@
 import { useEffect, useId, useState, type FormEvent } from 'react'
-import type { AreaCode, Option, ServiceCode } from '../content/types'
-import { useLanguage } from '../i18n/LanguageContext'
+import { ko as t } from '../content/ko'
+import type { CountryCode, FeatureCode, Option } from '../content/types'
 import { submitSignup, type SignupError, type SignupResult } from '../lib/api'
 import { getVisitorId } from '../lib/track'
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-const WECHAT_PATTERN = /^[A-Za-z0-9_-]{5,40}$/
 
-type Errors = Partial<Record<'contact' | 'stay' | 'consent' | 'form', string>>
+type Errors = Partial<Record<'email' | 'consent' | 'form', string>>
 
-export type Preselect = { area: AreaCode; nonce: number } | null
+export type Preselect = { country: CountryCode; nonce: number } | null
 
 export function SignupForm({ preselect, onDone }: { preselect: Preselect; onDone: (result: SignupResult) => void }) {
-  const { t, lang } = useLanguage()
   const s = t.signup
   const uid = useId()
 
-  const [contactType, setContactType] = useState<'email' | 'wechat'>(lang === 'zh' ? 'wechat' : 'email')
-  const [contact, setContact] = useState('')
+  const [email, setEmail] = useState('')
   const [name, setName] = useState('')
   const [age, setAge] = useState('')
-  const [city, setCity] = useState('')
-  const [visit, setVisit] = useState('')
-  const [stay, setStay] = useState('')
-  const [areas, setAreas] = useState<AreaCode[]>([])
-  const [services, setServices] = useState<ServiceCode[]>([])
+  const [countries, setCountries] = useState<CountryCode[]>([])
+  const [stayType, setStayType] = useState('')
+  const [timing, setTiming] = useState('')
+  const [features, setFeatures] = useState<FeatureCode[]>([])
   const [budget, setBudget] = useState('')
   const [consent, setConsent] = useState(false)
   const [errors, setErrors] = useState<Errors>({})
   const [submitting, setSubmitting] = useState(false)
 
-  // 리빙팩의 "이 리빙팩으로 사전가입" 버튼을 누르면 해당 동네를 미리 체크한다.
+  // 가격 예시의 "이 도시로 사전가입" 버튼을 누르면 그 나라를 미리 선택한다.
   useEffect(() => {
     if (!preselect) return
-    setAreas((prev) => (prev.includes(preselect.area) ? prev : [...prev, preselect.area]))
+    setCountries((prev) => (prev.includes(preselect.country) ? prev : [...prev, preselect.country]))
   }, [preselect])
 
-  // 사용자가 값을 고치면 해당 항목의 에러와 전체 에러를 지운다.
+  // 값을 고치면 해당 항목과 전체 에러를 지운다.
   const clearError = (key: keyof Errors) =>
     setErrors((prev) => (prev[key] || prev.form ? { ...prev, [key]: undefined, form: undefined } : prev))
 
   const validate = (): Errors => {
     const next: Errors = {}
-    const value = contact.trim()
-    if (!value) next.contact = s.errors.contactRequired
-    else if (contactType === 'email' && !EMAIL_PATTERN.test(value)) next.contact = s.errors.invalidEmail
-    else if (contactType === 'wechat' && !WECHAT_PATTERN.test(value)) next.contact = s.errors.invalidWechat
-    if (stay) {
-      const days = Number(stay)
-      if (!Number.isInteger(days) || days < 1 || days > 365) next.stay = s.errors.stayDays
-    }
+    const value = email.trim()
+    if (!value) next.email = s.errors.emailRequired
+    else if (!EMAIL_PATTERN.test(value)) next.email = s.errors.invalidEmail
     if (!consent) next.consent = s.errors.consentRequired
     return next
   }
@@ -58,34 +49,29 @@ export function SignupForm({ preselect, onDone }: { preselect: Preselect; onDone
     event.preventDefault()
     const found = validate()
     setErrors(found)
-    if (Object.keys(found).length > 0) {
-      const firstKey = (['contact', 'stay', 'consent'] as const).find((key) => found[key])
-      document.getElementById(`${uid}-${firstKey}`)?.focus()
+    if (found.email || found.consent) {
+      document.getElementById(`${uid}-${found.email ? 'email' : 'consent'}`)?.focus()
       return
     }
 
     setSubmitting(true)
     try {
       const result = await submitSignup({
-        contact_type: contactType,
-        contact: contact.trim(),
+        email: email.trim(),
         name: name.trim(),
         age_range: age,
-        city: city.trim(),
-        visit_timing: visit,
-        stay_days: stay ? Number(stay) : null,
-        interest_areas: areas,
-        interest_services: services,
+        countries,
+        stay_type: stayType,
+        timing,
+        features,
         budget_range: budget,
         consent,
-        language: lang,
         visitor_id: getVisitorId(),
       })
       onDone(result)
     } catch (error) {
       const code = error as SignupError
-      if (code === 'invalid_email') setErrors({ contact: s.errors.invalidEmail })
-      else if (code === 'invalid_wechat') setErrors({ contact: s.errors.invalidWechat })
+      if (code === 'invalid_email') setErrors({ email: s.errors.invalidEmail })
       else if (code === 'consent_required') setErrors({ consent: s.errors.consentRequired })
       else if (code === 'throttled') setErrors({ form: s.errors.throttled })
       else setErrors({ form: s.errors.network })
@@ -102,135 +88,73 @@ export function SignupForm({ preselect, onDone }: { preselect: Preselect; onDone
         </h2>
         <p className="section__intro">{s.intro}</p>
         {s.benefits.length > 0 && (
-          <ul className="signup__benefits">
-            {s.benefits.map((benefit) => (
-              <li key={benefit}>{benefit}</li>
-            ))}
-          </ul>
+          <div className="signup__benefits">
+            <h3>{s.benefitsTitle}</h3>
+            <ul>
+              {s.benefits.map((benefit) => (
+                <li key={benefit}>{benefit}</li>
+              ))}
+            </ul>
+          </div>
         )}
       </div>
 
       <form className="form" onSubmit={handleSubmit} noValidate>
-        <fieldset className="form__group">
-          <legend className="form__legend">
-            {s.contactLegend} <span className="form__badge form__badge--required">{s.required}</span>
-          </legend>
+        <div className="field">
+          <label className="field__label" htmlFor={`${uid}-email`}>
+            {s.email.label} <span className="tag tag--required">{s.required}</span>
+          </label>
+          <input
+            id={`${uid}-email`}
+            className="input"
+            type="email"
+            inputMode="email"
+            autoComplete="email"
+            autoCapitalize="off"
+            spellCheck={false}
+            placeholder={s.email.placeholder}
+            value={email}
+            onChange={(e) => {
+              setEmail(e.target.value)
+              clearError('email')
+            }}
+            aria-invalid={Boolean(errors.email)}
+            aria-describedby={errors.email ? `${uid}-email-error` : undefined}
+          />
+          {errors.email && (
+            <p className="field__error" id={`${uid}-email-error`}>
+              {errors.email}
+            </p>
+          )}
+        </div>
 
-          <div className="segmented" role="radiogroup" aria-label={s.contactLegend}>
-            {s.contactTypes.map((option) => (
-              <label key={option.value} className="segmented__option">
-                <input
-                  type="radio"
-                  name="contact_type"
-                  value={option.value}
-                  checked={contactType === option.value}
-                  onChange={() => {
-                    setContactType(option.value)
-                    clearError('contact')
-                  }}
-                />
-                <span>{option.label}</span>
-              </label>
-            ))}
-          </div>
-
+        <div className="form__row">
           <div className="field">
-            <label className="visually-hidden" htmlFor={`${uid}-contact`}>
-              {s.contactTypes.find((o) => o.value === contactType)?.label}
+            <label className="field__label" htmlFor={`${uid}-name`}>
+              {s.name.label} <span className="tag">{s.optional}</span>
             </label>
             <input
-              id={`${uid}-contact`}
+              id={`${uid}-name`}
               className="input"
-              type={contactType === 'email' ? 'email' : 'text'}
-              inputMode={contactType === 'email' ? 'email' : 'text'}
-              autoComplete={contactType === 'email' ? 'email' : 'off'}
-              autoCapitalize="off"
-              spellCheck={false}
-              placeholder={s.contactPlaceholder[contactType]}
-              value={contact}
-              onChange={(e) => {
-                setContact(e.target.value)
-                clearError('contact')
-              }}
-              aria-invalid={Boolean(errors.contact)}
-              aria-describedby={errors.contact ? `${uid}-contact-error` : undefined}
+              type="text"
+              maxLength={50}
+              autoComplete="nickname"
+              placeholder={s.name.placeholder}
+              value={name}
+              onChange={(e) => setName(e.target.value)}
             />
-            {errors.contact && (
-              <p className="field__error" id={`${uid}-contact-error`}>
-                {errors.contact}
-              </p>
-            )}
           </div>
+          <SelectField id={`${uid}-age`} label={s.age.label} tag={s.optional} placeholder={s.age.placeholder} options={s.age.options} value={age} onChange={setAge} />
+        </div>
 
-          <div className="form__row">
-            <TextField id={`${uid}-name`} label={s.name.label} optional={s.optional} placeholder={s.name.placeholder} value={name} onChange={setName} autoComplete="nickname" />
-            <SelectField id={`${uid}-age`} label={s.age.label} optional={s.optional} placeholder={s.age.placeholder} options={s.age.options} value={age} onChange={setAge} />
-          </div>
-          <TextField id={`${uid}-city`} label={s.city.label} optional={s.optional} placeholder={s.city.placeholder} value={city} onChange={setCity} autoComplete="address-level2" />
-        </fieldset>
+        <ChipGroup label={s.countries.label} tag={s.optional} options={s.countries.options} selected={countries} onChange={setCountries} />
 
-        <fieldset className="form__group">
-          <legend className="form__legend">
-            {s.surveyLegend} <span className="form__badge">{s.optional}</span>
-          </legend>
+        <fieldset className="form__survey">
+          <legend className="form__legend">{s.surveyLegend}</legend>
           <p className="form__hint">{s.surveyIntro}</p>
-
-          <SelectField id={`${uid}-visit`} label={s.visit.label} placeholder={s.visit.placeholder} options={s.visit.options} value={visit} onChange={setVisit} />
-
-          <div className="field">
-            <label className="field__label" htmlFor={`${uid}-stay`}>
-              {s.stay.label}
-            </label>
-            <div className="stay">
-              <div className="stay__input">
-                <input
-                  id={`${uid}-stay`}
-                  className="input"
-                  type="number"
-                  inputMode="numeric"
-                  min={1}
-                  max={365}
-                  value={stay}
-                  onChange={(e) => {
-                    setStay(e.target.value)
-                    clearError('stay')
-                  }}
-                  aria-invalid={Boolean(errors.stay)}
-                  aria-describedby={`${uid}-stay-hint${errors.stay ? ` ${uid}-stay-error` : ''}`}
-                />
-                <span className="stay__unit">{s.stay.unit}</span>
-              </div>
-              <div className="stay__quick">
-                {s.stay.quick.map((days) => (
-                  <button
-                    key={days}
-                    type="button"
-                    className="chip"
-                    aria-pressed={stay === String(days)}
-                    onClick={() => {
-                      setStay(String(days))
-                      clearError('stay')
-                    }}
-                  >
-                    {days}
-                    {s.stay.unit}
-                  </button>
-                ))}
-              </div>
-            </div>
-            <p className="form__hint" id={`${uid}-stay-hint`}>
-              {s.stay.hint}
-            </p>
-            {errors.stay && (
-              <p className="field__error" id={`${uid}-stay-error`}>
-                {errors.stay}
-              </p>
-            )}
-          </div>
-
-          <ChipGroup label={s.areas.label} options={s.areas.options} selected={areas} onChange={setAreas} />
-          <ChipGroup label={s.services.label} options={s.services.options} selected={services} onChange={setServices} />
-
+          <SelectField id={`${uid}-stay`} label={s.stayType.label} placeholder={s.stayType.placeholder} options={s.stayType.options} value={stayType} onChange={setStayType} />
+          <SelectField id={`${uid}-timing`} label={s.timing.label} placeholder={s.timing.placeholder} options={s.timing.options} value={timing} onChange={setTiming} />
+          <ChipGroup label={s.features.label} options={s.features.options} selected={features} onChange={setFeatures} />
           <SelectField id={`${uid}-budget`} label={s.budget.label} placeholder={s.budget.placeholder} options={s.budget.options} value={budget} onChange={setBudget} />
         </fieldset>
 
@@ -248,12 +172,14 @@ export function SignupForm({ preselect, onDone }: { preselect: Preselect; onDone
               aria-describedby={`${uid}-consent-notice${errors.consent ? ` ${uid}-consent-error` : ''}`}
             />
             <span>
-              {s.consent.label} <span className="form__badge form__badge--required">{s.required}</span>
+              {s.consent.label} <span className="tag tag--required">{s.required}</span>
             </span>
           </label>
-          <p className="consent__notice" id={`${uid}-consent-notice`}>
-            {s.consent.notice}
-          </p>
+          <ul className="consent__notice" id={`${uid}-consent-notice`}>
+            {s.consent.notice.map((line) => (
+              <li key={line}>{line}</li>
+            ))}
+          </ul>
           {errors.consent && (
             <p className="field__error" id={`${uid}-consent-error`}>
               {errors.consent}
@@ -275,42 +201,10 @@ export function SignupForm({ preselect, onDone }: { preselect: Preselect; onDone
   )
 }
 
-function OptionalTag({ text }: { text?: string }) {
-  return text ? <span className="field__optional">{text}</span> : null
-}
-
-function TextField(props: {
-  id: string
-  label: string
-  optional?: string
-  placeholder: string
-  value: string
-  onChange: (value: string) => void
-  autoComplete?: string
-}) {
-  return (
-    <div className="field">
-      <label className="field__label" htmlFor={props.id}>
-        {props.label} <OptionalTag text={props.optional} />
-      </label>
-      <input
-        id={props.id}
-        className="input"
-        type="text"
-        maxLength={50}
-        placeholder={props.placeholder}
-        autoComplete={props.autoComplete}
-        value={props.value}
-        onChange={(e) => props.onChange(e.target.value)}
-      />
-    </div>
-  )
-}
-
 function SelectField(props: {
   id: string
   label: string
-  optional?: string
+  tag?: string
   placeholder: string
   options: Option[]
   value: string
@@ -319,7 +213,7 @@ function SelectField(props: {
   return (
     <div className="field">
       <label className="field__label" htmlFor={props.id}>
-        {props.label} <OptionalTag text={props.optional} />
+        {props.label} {props.tag && <span className="tag">{props.tag}</span>}
       </label>
       <select id={props.id} className="input select" value={props.value} onChange={(e) => props.onChange(e.target.value)}>
         <option value="">{props.placeholder}</option>
@@ -335,6 +229,7 @@ function SelectField(props: {
 
 function ChipGroup<T extends string>(props: {
   label: string
+  tag?: string
   options: Option<T>[]
   selected: T[]
   onChange: (next: T[]) => void
@@ -344,10 +239,12 @@ function ChipGroup<T extends string>(props: {
 
   return (
     <fieldset className="field chips">
-      <legend className="field__label">{props.label}</legend>
+      <legend className="field__label">
+        {props.label} {props.tag && <span className="tag">{props.tag}</span>}
+      </legend>
       <div className="chips__list">
         {props.options.map((option) => (
-          <label key={option.value} className="chip chip--check">
+          <label key={option.value} className="chip">
             <input type="checkbox" checked={props.selected.includes(option.value)} onChange={() => toggle(option.value)} />
             <span>{option.label}</span>
           </label>

@@ -1,10 +1,10 @@
 # FANSTAY 프로젝트
 
-중국 본토 20~30대를 대상으로 한 "서울 한 달 살기(30일 리빙팩)" 서비스.
-지금 단계는 샤오홍슈 광고 유입자의 반응을 측정하는 **사전가입 웹사이트**다.
+해외에서 **한 달 살기**를 준비하는 한국인을 위한 숙소 · 체류정보 · 생활 인프라 통합 플랫폼.
+지금 단계는 메타 광고로 들어온 한국인 20~30대의 반응을 측정하는 **사전가입 웹사이트**다.
 
-- 서비스 이름은 **FANSTAY**다 (이전 이름 HANSTAY). 저장소·폴더 이름 `hanstay_project`와 원본 자료 파일명은 그대로 둔다.
-
+- 2026-09-19 주제 변경: 이전 "중국인 대상 서울 한 달 살기" → 현재 "한국인 대상 해외 한 달 살기". 서비스 이름 FANSTAY는 그대로다.
+- 저장소·폴더 이름(`hanstay_project`)은 예전 이름 그대로 둔다.
 - 서비스 정의·요구사항·미정 사항: `plan.md` (작업 전에 먼저 읽을 것)
 - 작업 지시 양식: `prompt_template.md`
 
@@ -13,18 +13,18 @@
 ```
 hanstay_project/
 ├── .github/                 이슈 템플릿(ISSUE_TEMPLATE/), PR 템플릿
-├── docs/deploy.md           알리바바 클라우드 서버리스 배포 가이드
-├── Dockerfile               React 빌드 + Django를 담은 배포 컨테이너 (포트 9000)
-├── s.yaml, deploy.sh        Function Compute 배포 설정과 스크립트 (값은 .env.deploy)
+├── docs/deploy.md           Cloud Run + Firebase Hosting 배포 가이드
+├── Dockerfile               Django(API·관리자) 컨테이너 (Cloud Run, 포트 $PORT)
+├── firebase.json            Firebase Hosting: 화면 제공 + /api/** → Cloud Run
+├── deploy.sh                배포 스크립트 (값은 .env.deploy, 양식은 deploy.env.example)
 ├── plan.md                  서비스 계획서 + 사전가입 사이트 요구사항
 ├── prompt_template.md       작업 지시 양식
-├── frontend/                React 19 + TypeScript + Vite (원페이지 랜딩)
+├── frontend/                React 19 + TypeScript + Vite (원페이지 랜딩, 한국어)
 │   └── src/
-│       ├── content/         화면 문구 전부 (zh.ts 중국어, ko.ts 한국어, types.ts 구조)
-│       ├── components/      섹션별 컴포넌트 (Hero, Problems, ..., SignupForm, ThankYou)
-│       ├── illustrations/   인라인 SVG 일러스트와 아이콘
-│       ├── i18n/            언어 전환 (기본 중국어)
-│       ├── lib/             api.ts(가입 API), track.ts(반응 측정)
+│       ├── content/         화면 문구 전부 (ko.ts, 구조는 types.ts)
+│       ├── components/      섹션별 컴포넌트 (Hero, Problems, Solution, Features, Flow, Pricing, SignupForm, Faq, ThankYou)
+│       ├── illustrations/   StayCalendar(히어로 달력), icons
+│       ├── lib/             api.ts(가입 API), track.ts(자체 반응 측정), pixel.ts(메타 픽셀)
 │       └── styles.css       디자인 토큰과 전체 스타일
 └── backend/                 Django 5.2 + DRF
     ├── config/              설정(환경변수 기반), URL
@@ -37,7 +37,7 @@ hanstay_project/
 ```bash
 # 백엔드 (http://127.0.0.1:8000, 관리자 /admin/)
 cd backend
-python -m venv .venv                       # 최초 1회
+python -m venv .venv                            # 최초 1회
 .venv/Scripts/pip install -r requirements.txt   # 최초 1회 (macOS/Linux는 .venv/bin/)
 .venv/Scripts/python manage.py migrate
 .venv/Scripts/python manage.py createsuperuser  # 관리자 페이지를 쓸 때 1회
@@ -64,39 +64,40 @@ Windows 콘솔에서 한글 출력이 깨지면 `PYTHONIOENCODING=utf-8`을 앞�
 
 | 메서드 | 경로 | 설명 |
 |--------|------|------|
-| POST | `/api/signups/` | 사전가입 저장. 응답 `{position, created}`. 같은 연락처면 기존 순번과 `created: false` |
+| POST | `/api/signups/` | 사전가입 저장. 응답 `{position, created}`. 같은 이메일이면 기존 순번과 `created: false` |
 | POST | `/api/events/` | `page_view` / `cta_click` 기록 (sendBeacon의 text/plain도 받음). 204 |
 | GET | `/api/health/` | 상태 확인 |
 
 ## 개발 규칙
 
-### 중국 본토 접속 (가장 중요)
-- **구글 계열 서비스와 중국에서 막히는 CDN을 쓰지 않는다.** Google Fonts, Google Analytics, reCAPTCHA, Google Forms, YouTube 임베드, unpkg/jsdelivr 런타임 로드 등.
-- 폰트는 기기 기본 서체 스택을 쓰고, 추가 폰트는 npm(@fontsource)으로 번들에 포함한다.
-- 이미지·일러스트는 인라인 SVG나 `frontend/public`에 직접 둔다. 외부 이미지 URL을 쓰지 않는다.
-- 브라우저는 자체 프론트/API 도메인 외의 곳에 요청하지 않아야 한다.
-
-### 문구와 다국어
-- 화면 문구는 컴포넌트에 직접 쓰지 않고 `frontend/src/content/zh.ts`, `ko.ts`에 둔다. 두 파일은 `types.ts`의 같은 구조를 채운다.
-- 중국어 간체가 기본 언어다. 문구를 추가하거나 바꿀 때는 두 언어를 함께 수정한다.
-- 폼 선택지의 `value` 코드는 백엔드 `signups/models.py`의 choices와 반드시 같아야 한다. 한쪽을 바꾸면 다른 쪽과 테스트도 함께 바꾼다.
+### 문구
+- 화면 문구는 컴포넌트에 직접 쓰지 않고 `frontend/src/content/ko.ts`에 둔다. 구조는 `types.ts`가 정한다. 나중에 언어를 추가할 때 같은 구조로 파일을 더한다.
+- 폼 선택지의 `value` 코드는 백엔드 `signups/models.py`의 choices(`COUNTRY_CHOICES`, `FEATURE_CHOICES` 포함)와 반드시 같아야 한다. 한쪽을 바꾸면 다른 쪽과 테스트, `plan.md` 11번을 함께 바꾼다.
+- 문구는 쉬운 말, 능동형, 존댓말(해요체 위주)로 쓴다. 버튼 이름과 결과 문구를 맞춘다(예: "사전가입하기" → "사전가입이 완료됐어요").
+- 가격 예시는 추정치다. 화면에 추정치임을 밝히는 문구(`pricing.note`)를 지우지 않는다.
 
 ### 디자인
 - 디자인 작업에는 `frontend-design` 스킬(`.claude/skills/frontend-design`)을 따른다.
-- 컨셉은 "서울 생활 지도"(지도 + 지하철 2호선). 토큰은 `styles.css` 맨 위 `:root`에 있다. 새 색을 즉흥적으로 추가하지 않는다.
-- 메인 컬러는 빨강(`--brand`, 버튼과 헤더·푸터 바는 `--brand-deep`)이다. 빨강 바 위의 버튼은 흰 바탕 + 빨강 글자로 반전한다. 초록(`--line2`)은 실제 지하철 2호선 표시(히어로 지도의 노선, 역 번호 배지)에만 쓴다.
-- 자동 애니메이션은 히어로 지도 하나뿐이다. 섹션마다 등장 효과를 넣지 않는다. `prefers-reduced-motion`을 지킨다.
+- 컨셉은 **"한 달 체류 달력"**이다. 토큰은 `styles.css` 맨 위 `:root`에 있다. 새 색을 즉흥적으로 추가하지 않는다.
+- 색: 남색 `--ink`(글자·버튼), 형광 노랑 `--marker`(강조), `--paper`/`--sheet`(배경·종이 면), `--grid`(선), `--sea`(링크·포커스).
+- 강조는 형광펜(`--marker`) 하나로만 한다: 달력의 체류 기간, 선택된 칩, 비교표의 팬스테이 행, 합계 금액, 대기 순번.
+- 글꼴: 제목 `Gowun Batang`, 본문 `Pretendard`(둘 다 npm 번들). 번호는 실제 순서가 있는 이용 흐름에만 쓴다.
+- 자동 애니메이션은 히어로 달력의 형광펜 칠하기 하나뿐이다. 섹션 등장 효과를 넣지 않는다. `prefers-reduced-motion`을 지킨다.
 - 모바일 우선. 변경 후 390px과 1440px 폭에서 가로 스크롤이 생기지 않는지 확인한다.
+
+### 측정과 개인정보
+- 자체 수집(`track.ts`)은 방문과 버튼 클릭만 기록하고 개인정보를 저장하지 않는다.
+- 메타 픽셀은 `VITE_META_PIXEL_ID`가 있을 때만 불러온다. 표준 이벤트는 `PageView`, 가입 완료 시 `Lead`만 쓴다. 폼 입력값(이메일 등)을 픽셀로 보내지 않는다.
+- 픽셀·수집 항목을 바꾸면 동의 안내문(`signup.consent.notice`)과 푸터 고지(`footer.notice`)도 함께 고친다.
 
 ### 백엔드
 - 설정값은 환경변수로 받는다 (`config/settings.py` 상단 주석 참고). 비밀값을 코드에 넣지 않는다.
 - 가입·이벤트 API는 인증 없이 열려 있으므로 입력 검증과 스로틀(`DEFAULT_THROTTLE_RATES`)을 유지한다.
-- 이벤트에는 개인정보를 저장하지 않는다.
 
 ### 범위
 - 로그인, 결제, 실제 예약 기능은 만들지 않는다 (사전가입 단계).
-- 가입 혜택 문구, 도메인 이름, 분석 도구는 아직 미정이다. `plan.md` 17번을 확인하고 임의로 정하지 않는다.
-- 비용이 발생하는 작업(유료 서비스 구매, 사양 상향, 최소 인스턴스 유지, CDN 추가 등)은 사용자 허락 없이 하지 않는다.
+- 가입 혜택 문구, 도메인, 메타 픽셀 ID, 개인정보 문의 연락처는 아직 미정이다. `plan.md` 17번을 확인하고 임의로 정하지 않는다.
+- 비용이 발생하는 작업(유료 서비스 구매, 도메인 구입, 최소 인스턴스 유지, 사양 상향 등)은 사용자 허락 없이 하지 않는다.
 
 ## GitHub 작업 방식
 
@@ -107,9 +108,9 @@ Windows 콘솔에서 한글 출력이 깨지면 `PYTHONIOENCODING=utf-8`을 앞�
 
 ## 배포
 
-- **알리바바 클라우드 국제판, 홍콩 리전(`cn-hongkong`), 서버리스만 사용.** 중국 본토 리전(ICP 비안 필요)은 쓰지 않는다.
-- 구성: Function Compute 3.0 커스텀 컨테이너 1개(React 빌드 + Django, WhiteNoise가 화면·정적 파일 제공) + ACR 개인판 + Neon PostgreSQL + 자체 도메인 + Let's Encrypt. CDN은 쓰지 않는다.
-- 배포: `./deploy.sh` (커밋 번호로 이미지 태그 → ACR 업로드 → `s deploy`). 롤백은 `./deploy.sh <태그>`. 전체 절차는 `docs/deploy.md`.
-- 운영 환경변수는 `.env.deploy`(git 제외, 양식은 `deploy.env.example`): `ACR_IMAGE_REPO`, `DJANGO_SECRET_KEY`, `DJANGO_ALLOWED_HOSTS`, `CSRF_TRUSTED_ORIGINS`, `DATABASE_URL`
-- 모델을 바꾸면 배포 전에 운영 DB에 `migrate`를 실행한다(`docs/deploy.md` 11번).
-- 컨테이너 실행 방식(포트, 환경변수, 빌드 단계)을 바꾸면 `Dockerfile`, `s.yaml`, `docs/deploy.md`를 함께 고친다.
+- **서버리스만 사용:** Firebase Hosting(화면, 무료 CDN·HTTPS) + Google Cloud Run 서울 `asia-northeast3`(서비스 `fanstay-api`, Django) + Neon PostgreSQL.
+- Firebase Hosting이 `/api/**`만 Cloud Run으로 넘긴다(`firebase.json`). 서비스 이름·리전을 바꾸면 `firebase.json`과 `deploy.sh`를 함께 고친다.
+- 관리자 페이지는 Cloud Run 주소(`…run.app/admin/`)로 쓴다. Firebase Hosting은 `__session` 외 쿠키를 전달하지 않는다.
+- 배포: `./deploy.sh [secrets|migrate|api|web|all]`. 전체 절차는 `docs/deploy.md`.
+- `.env.deploy`(git 제외): `GCP_PROJECT`, `DJANGO_SECRET_KEY`, `DATABASE_URL`, `META_PIXEL_ID`. 운영의 비밀값은 Secret Manager(`fanstay-django-secret`, `fanstay-database-url`)에 있다.
+- 모델을 바꾸면 배포 전에 `./deploy.sh migrate`를 실행한다.

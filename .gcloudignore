@@ -1,0 +1,14 @@
+# gcloud run deploy --source 로 올릴 때 제외할 것 (컨테이너는 backend/만 사용)
+.gcloudignore
+.git
+.github
+.claude
+.env
+.env.*
+**/__pycache__
+**/*.pyc
+backend/.venv
+backend/db.sqlite3
+backend/staticfiles
+frontend
+docs

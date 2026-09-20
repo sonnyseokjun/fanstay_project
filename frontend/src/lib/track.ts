@@ -1,7 +1,7 @@
 import { API_BASE } from './api'
 
 // 반응 측정: 방문(page_view)과 사전가입 버튼 클릭(cta_click)을 자체 백엔드에 기록한다.
-// 중국 본토에서 막히는 외부 분석 도구(구글 등)를 쓰지 않기 위해 직접 수집한다.
+// 관리자 통계 화면(/admin/stats/)이 이 기록을 쓴다. 메타 광고 전환은 pixel.ts가 따로 보낸다.
 
 const VISITOR_KEY = 'fanstay.visitor'
 let memoryVisitorId = ''
@@ -27,12 +27,11 @@ export function getVisitorId() {
 
 type EventType = 'page_view' | 'cta_click'
 
-export function track(eventType: EventType, options: { label?: string; lang?: string } = {}) {
+export function track(eventType: EventType, label = '') {
   const body = JSON.stringify({
     event_type: eventType,
     visitor_id: getVisitorId(),
-    label: options.label ?? '',
-    language: options.lang ?? '',
+    label,
     path: window.location.pathname,
     referrer: document.referrer.slice(0, 500),
   })

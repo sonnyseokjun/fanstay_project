@@ -12,18 +12,16 @@ class PreRegistrationApiTests(APITestCase):
 
     def payload(self, **overrides):
         data = {
-            "contact_type": "email",
-            "contact": "Test@Example.com",
-            "name": "小林",
+            "email": "Test@Example.com",
+            "name": "김팬스",
             "age_range": "25_29",
-            "city": "上海",
-            "visit_timing": "3_6_months",
-            "stay_days": 45,
-            "interest_areas": ["seongsu", "hannam"],
-            "interest_services": ["k_beauty", "cooking_class"],
-            "budget_range": "8k_12k",
+            "countries": ["thailand", "japan"],
+            "stay_type": "remote_work",
+            "timing": "3_6_months",
+            "features": ["monthly_stay", "escrow"],
+            "budget_range": "150_200",
             "consent": True,
-            "language": "zh",
+            "visitor_id": "v1",
         }
         data.update(overrides)
         return data
@@ -33,19 +31,18 @@ class PreRegistrationApiTests(APITestCase):
         self.assertEqual(res.status_code, 201)
         self.assertEqual(res.json(), {"position": 1, "created": True})
         signup = PreRegistration.objects.get()
-        self.assertEqual(signup.contact, "test@example.com")
-        self.assertEqual(signup.interest_areas, ["seongsu", "hannam"])
+        self.assertEqual(signup.email, "test@example.com")
+        self.assertEqual(signup.countries, ["thailand", "japan"])
+        self.assertEqual(signup.features, ["monthly_stay", "escrow"])
 
-    def test_contact_only_is_enough(self):
-        res = self.client.post(
-            URL, {"contact_type": "wechat", "contact": "fanstay_fan", "consent": True}, format="json"
-        )
+    def test_email_and_consent_are_enough(self):
+        res = self.client.post(URL, {"email": "solo@example.com", "consent": True}, format="json")
         self.assertEqual(res.status_code, 201)
 
-    def test_duplicate_contact_returns_existing_position(self):
+    def test_duplicate_email_returns_existing_position(self):
         self.client.post(URL, self.payload(), format="json")
-        self.client.post(URL, self.payload(contact="second@example.com"), format="json")
-        res = self.client.post(URL, self.payload(contact="TEST@example.com "), format="json")
+        self.client.post(URL, self.payload(email="second@example.com"), format="json")
+        res = self.client.post(URL, self.payload(email="TEST@example.com "), format="json")
         self.assertEqual(res.status_code, 200)
         self.assertEqual(res.json(), {"position": 1, "created": False})
         self.assertEqual(PreRegistration.objects.count(), 2)
@@ -55,14 +52,18 @@ class PreRegistrationApiTests(APITestCase):
         self.assertEqual(res.status_code, 400)
         self.assertIn("consent", res.json())
 
-    def test_rejects_invalid_contact(self):
-        res = self.client.post(URL, self.payload(contact="not-an-email"), format="json")
+    def test_rejects_invalid_email(self):
+        res = self.client.post(URL, self.payload(email="not-an-email"), format="json")
         self.assertEqual(res.status_code, 400)
-        res = self.client.post(URL, self.payload(contact_type="wechat", contact="a b"), format="json")
-        self.assertEqual(res.status_code, 400)
+        self.assertEqual(res.json()["email"], ["invalid_email"])
 
     def test_rejects_unknown_choices(self):
-        res = self.client.post(URL, self.payload(interest_areas=["busan"]), format="json")
+        res = self.client.post(URL, self.payload(countries=["mars"]), format="json")
         self.assertEqual(res.status_code, 400)
-        res = self.client.post(URL, self.payload(stay_days=0), format="json")
+        res = self.client.post(URL, self.payload(budget_range="999"), format="json")
         self.assertEqual(res.status_code, 400)
+
+    def test_deduplicates_multi_select(self):
+        self.client.post(URL, self.payload(countries=["japan", "japan"], features=["escrow", "escrow"]), format="json")
+        signup = PreRegistration.objects.get()
+        self.assertEqual((signup.countries, signup.features), (["japan"], ["escrow"]))
