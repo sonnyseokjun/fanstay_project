@@ -1,17 +1,14 @@
-import { useLanguage } from '../i18n/LanguageContext'
+import { ko as t } from '../content/ko'
+import { Wordmark } from './Wordmark'
 
 export function Footer() {
-  const { t } = useLanguage()
   return (
     <footer className="site-footer">
       <div className="site-footer__inner">
-        <p className="wordmark wordmark--footer">
-          <span className="wordmark__mark" aria-hidden="true" />
-          FANSTAY
-        </p>
-        <p className="site-footer__tagline">{t.footer.tagline}</p>
-        <p className="site-footer__note">{t.footer.note}</p>
-        <p className="site-footer__note">{t.footer.copyright}</p>
+        <Wordmark />
+        <p>{t.footer.tagline}</p>
+        <p className="site-footer__notice">{t.footer.notice}</p>
+        <p className="site-footer__copy">{t.footer.copyright}</p>
       </div>
     </footer>
   )

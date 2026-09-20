@@ -1,136 +1,116 @@
-// 사이트에 보이는 모든 문구의 구조. zh.ts / ko.ts가 이 타입을 똑같이 채운다.
-// 선택지 code 값은 백엔드(signups/models.py)의 choices와 반드시 같아야 한다.
-
-export type Lang = 'zh' | 'ko'
-
-export type AreaCode = 'seongsu' | 'hongdae' | 'gangnam' | 'hannam'
-
-export type ServiceCode =
-  | 'k_beauty'
-  | 'hair_salon'
-  | 'fitness'
-  | 'spa_wellness'
-  | 'cooking_class'
-  | 'local_community'
-  | 'airport_transfer'
-  | 'sim_data'
-  | 'cleaning_laundry'
-  | 'medical_support'
+// 화면 문구의 구조. 문구는 ko.ts에만 쓰고 컴포넌트에는 쓰지 않는다.
+// 선택지 value 코드는 backend/signups/models.py의 choices와 같아야 한다.
 
 export type Option<T extends string = string> = { value: T; label: string }
 
+export type CountryCode = 'thailand' | 'vietnam' | 'indonesia' | 'japan' | 'malaysia' | 'taiwan' | 'europe' | 'other'
+export type FeatureCode =
+  | 'monthly_stay'
+  | 'escrow'
+  | 'city_match'
+  | 'cost_estimate'
+  | 'checklist'
+  | 'infra_map'
+  | 'community'
+  | 'stay_review'
+
+export type CalendarNote = { day: number; label: string; short: string } // short: 좁은 화면용
+
 export type Content = {
-  meta: { title: string; description: string; htmlLang: string }
-  header: { cta: string; switchTo: string; switchLabel: string; home: string; skipToForm: string }
+  meta: { title: string; description: string }
+  header: { home: string; cta: string; skipToForm: string }
   hero: {
-    headline: string[]
-    body: string
+    title: string
+    lead: string
     cta: string
     note: string
-    map: {
-      home: string
-      radius: string
-      mart: string
-      laundry: string
-      pharmacy: string
-      gym: string
-      cafe: string
-      clinic: string
-      line: string
+    calendar: {
       alt: string
+      city: string
+      year: number
+      month: number // 1~12
+      weekdays: string[]
+      notes: CalendarNote[]
+      legend: string
     }
   }
   problems: {
     title: string
     intro: string
-    items: { query: string; title: string; body: string }[]
+    items: { topic: string; title: string; body: string; evidence: string; source: string }[]
   }
   solution: {
     title: string
     intro: string
-    ringAlt: string
-    layers: { key: 'home' | 'daily' | 'klife'; name: string; ringLabel: string; title: string; points: string[] }[]
+    matrix: {
+      caption: string
+      conditions: [string, string, string]
+      yes: string
+      no: string
+      rows: { name: string; marks: [boolean, boolean, boolean]; note: string; ours?: boolean }[]
+    }
   }
-  neighborhoods: {
+  features: {
     title: string
     intro: string
-    lineName: string
-    items: {
-      code: Exclude<AreaCode, 'hannam'>
-      stationNo: string
-      nameKo: string
-      nameLocal: string
-      nameEn: string
-      theme: string
-      body: string
-      tags: string[]
-    }[]
+    items: { key: 'stay' | 'escrow' | 'ai' | 'life'; title: string; body: string }[]
+    escrowSteps: string[]
+    escrowCaption: string
+    cities: { title: string; intro: string; list: { name: string; country: string; note: string }[] }
   }
-  journey: {
+  flow: {
     title: string
     intro: string
-    steps: { title: string; body: string }[]
+    steps: { when: string; title: string; body: string }[]
   }
-  packs: {
+  pricing: {
     title: string
     intro: string
-    perPeriod: string
-    includesLabel: string
+    note: string
+    labels: { stay: string; living: string; total: string; perMonth: string }
+    cities: { code: CountryCode; city: string; country: string; stay: string; living: string; total: string; basis: string }[]
     cta: string
-    items: {
-      area: Exclude<AreaCode, 'hannam'>
-      name: string
-      forWhom: string
-      pricePrimary: string
-      priceSecondary: string
-      includes: string[]
-    }[]
   }
   signup: {
     title: string
     intro: string
-    /** 사전가입 혜택. 미정이라 비워 둠 — 채우면 폼 위에 표시된다. */
+    benefitsTitle: string
     benefits: string[]
     required: string
     optional: string
-    contactLegend: string
-    contactTypes: Option<'email' | 'wechat'>[]
-    contactPlaceholder: { email: string; wechat: string }
+    email: { label: string; placeholder: string }
     name: { label: string; placeholder: string }
     age: { label: string; placeholder: string; options: Option[] }
-    city: { label: string; placeholder: string }
+    countries: { label: string; options: Option<CountryCode>[] }
     surveyLegend: string
     surveyIntro: string
-    visit: { label: string; placeholder: string; options: Option[] }
-    stay: { label: string; unit: string; quick: number[]; hint: string }
-    areas: { label: string; options: Option<AreaCode>[] }
-    services: { label: string; options: Option<ServiceCode>[] }
+    stayType: { label: string; placeholder: string; options: Option[] }
+    timing: { label: string; placeholder: string; options: Option[] }
+    features: { label: string; options: Option<FeatureCode>[] }
     budget: { label: string; placeholder: string; options: Option[] }
-    consent: { label: string; notice: string }
+    consent: { label: string; notice: string[] }
     submit: string
     submitting: string
     errors: {
-      contactRequired: string
+      emailRequired: string
       invalidEmail: string
-      invalidWechat: string
-      stayDays: string
       consentRequired: string
       throttled: string
       network: string
     }
   }
+  faq: { title: string; items: { q: string; a: string }[] }
+  footer: { tagline: string; notice: string; copyright: string }
   thanks: {
     title: string
     position: (n: number) => string
     already: (n: number) => string
     body: string
+    share: string
     shareTitle: string
-    shareButton: string
     shareText: string
     copied: string
     copyFailed: string
     back: string
   }
-  faq: { title: string; items: { q: string; a: string }[] }
-  footer: { tagline: string; note: string; copyright: string }
 }

@@ -20,7 +20,7 @@ class EventApiTests(APITestCase):
 
     def test_records_json_event(self):
         res = self.client.post(
-            URL, {"event_type": "cta_click", "visitor_id": "v1", "label": "hero", "language": "zh"}, format="json"
+            URL, {"event_type": "cta_click", "visitor_id": "v1", "label": "hero"}, format="json"
         )
         self.assertEqual(res.status_code, 204)
         self.assertEqual(Event.objects.get().label, "hero")
@@ -58,8 +58,8 @@ class AdminStatsViewTests(TestCase):
         Event.objects.create(event_type="page_view", visitor_id="v2")
         Event.objects.create(event_type="cta_click", visitor_id="v1", label="hero")
         PreRegistration.objects.create(
-            contact_type="email", contact="a@example.com", consent=True,
-            interest_areas=["seongsu", "hongdae"], budget_range="5k_8k", stay_days=30,
+            email="a@example.com", consent=True,
+            countries=["thailand", "japan"], budget_range="150_200", stay_type="remote_work",
         )
         self.client.force_login(self.staff)
         res = self.client.get("/admin/stats/?days=7")
@@ -67,9 +67,9 @@ class AdminStatsViewTests(TestCase):
         s = res.context["s"]
         self.assertEqual((s["visitors"], s["cta_clicks"], s["signups"]), (2, 1, 1))
         self.assertEqual(s["signup_rate"], "50.0%")
-        self.assertContains(res, "성수")
-        self.assertContains(res, "¥5,000~8,000")
-        self.assertContains(res, "21~40일")
+        self.assertContains(res, "태국")
+        self.assertContains(res, "150~200만 원")
+        self.assertContains(res, "원격근무·프리랜서")
 
     def test_ignores_unknown_period(self):
         self.client.force_login(self.staff)

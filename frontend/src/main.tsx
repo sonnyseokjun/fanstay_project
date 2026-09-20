@@ -1,14 +1,12 @@
-import '@fontsource-variable/bricolage-grotesque'
+import '@fontsource/gowun-batang/700.css'
+import 'pretendard/dist/web/variable/pretendardvariable-dynamic-subset.css'
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import App from './App'
-import { LanguageProvider } from './i18n/LanguageContext'
 import './styles.css'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <LanguageProvider>
-      <App />
-    </LanguageProvider>
+    <App />
   </StrictMode>,
 )

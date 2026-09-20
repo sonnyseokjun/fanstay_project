@@ -1,27 +1,23 @@
-import { useLanguage } from '../i18n/LanguageContext'
-import { HeroMap } from '../illustrations/HeroMap'
+import { ko as t } from '../content/ko'
+import { StayCalendar } from '../illustrations/StayCalendar'
 
-export function Hero({ onCta }: { onCta: (label: string) => void }) {
-  const { t } = useLanguage()
+export function Hero({ onCta }: { onCta: () => void }) {
+  const h = t.hero
   return (
-    <section className="hero" id="top">
-      <div className="hero__text">
-        <h1 className="hero__headline">
-          {t.hero.headline.map((line) => (
-            <span key={line}>{line}</span>
-          ))}
+    <section className="hero" aria-labelledby="hero-title">
+      <div className="hero__copy">
+        <h1 id="hero-title" className="hero__title">
+          {h.title}
         </h1>
-        <p className="hero__body">{t.hero.body}</p>
-        <div className="hero__cta">
-          <button type="button" className="button" onClick={() => onCta('hero')}>
-            {t.hero.cta}
+        <p className="hero__lead">{h.lead}</p>
+        <div className="hero__actions">
+          <button type="button" className="button" onClick={onCta}>
+            {h.cta}
           </button>
-          <p className="hero__note">{t.hero.note}</p>
+          <p className="hero__note">{h.note}</p>
         </div>
       </div>
-      <div className="hero__visual">
-        <HeroMap labels={t.hero.map} />
-      </div>
+      <StayCalendar calendar={h.calendar} />
     </section>
   )
 }

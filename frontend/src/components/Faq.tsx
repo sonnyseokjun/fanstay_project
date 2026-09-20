@@ -1,19 +1,19 @@
-import { useLanguage } from '../i18n/LanguageContext'
+import { ko as t } from '../content/ko'
+import { Icon } from '../illustrations/icons'
+import { SectionHead } from './SectionHead'
 
 export function Faq() {
-  const { t } = useLanguage()
   return (
-    <section className="section" aria-labelledby="faq-title">
-      <div className="section__head">
-        <h2 id="faq-title" className="section__title">
-          {t.faq.title}
-        </h2>
-      </div>
-      <div className="faq">
+    <section className="section faq" aria-labelledby="faq-title">
+      <SectionHead id="faq-title" title={t.faq.title} />
+      <div className="faq__list">
         {t.faq.items.map((item) => (
           <details key={item.q} className="faq__item">
-            <summary className="faq__q">{item.q}</summary>
-            <p className="faq__a">{item.a}</p>
+            <summary>
+              <span>{item.q}</span>
+              <Icon name="plus" size={20} className="faq__icon" />
+            </summary>
+            <p>{item.a}</p>
           </details>
         ))}
       </div>

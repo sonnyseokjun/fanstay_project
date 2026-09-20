@@ -14,7 +14,6 @@ class Event(models.Model):
     event_type = models.CharField("이벤트", max_length=20, choices=Type.choices)
     visitor_id = models.CharField("방문자 ID", max_length=64)
     label = models.CharField("버튼 위치", max_length=40, blank=True)
-    language = models.CharField("언어", max_length=2, blank=True)
     path = models.CharField("경로", max_length=200, blank=True)
     referrer = models.CharField("유입 경로", max_length=500, blank=True)
     created_at = models.DateTimeField("발생 일시", auto_now_add=True, db_index=True)

@@ -11,7 +11,7 @@ from .serializers import PreRegistrationSerializer
 class PreRegistrationCreateView(APIView):
     """POST /api/signups/ — 사전가입을 저장하고 대기 순번을 돌려준다.
 
-    같은 연락처로 다시 가입하면 새로 만들지 않고 기존 순번을 돌려준다(created=false).
+    같은 이메일로 다시 가입하면 새로 만들지 않고 기존 순번을 돌려준다(created=false).
     """
 
     throttle_classes = [ScopedRateThrottle]
@@ -30,7 +30,7 @@ class PreRegistrationCreateView(APIView):
             with transaction.atomic():
                 signup = serializer.save()
         except IntegrityError:
-            # 같은 연락처가 동시에 들어온 경우
+            # 같은 이메일이 동시에 들어온 경우
             existing = self._find_existing(data)
             return Response({"position": existing.position, "created": False}, status=status.HTTP_200_OK)
 
@@ -38,6 +38,4 @@ class PreRegistrationCreateView(APIView):
 
     @staticmethod
     def _find_existing(data):
-        return PreRegistration.objects.filter(
-            contact_type=data["contact_type"], contact=data["contact"]
-        ).first()
+        return PreRegistration.objects.filter(email=data["email"]).first()
