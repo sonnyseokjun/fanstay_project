@@ -41,12 +41,15 @@ Neon PostgreSQL (서버리스, 무료 플랜)
 
 ## 1. Google Cloud 프로젝트와 결제 👤💳
 
-1. [console.cloud.google.com](https://console.cloud.google.com)에 Google 계정으로 로그인합니다.
-2. 상단 프로젝트 선택 → **새 프로젝트**를 누릅니다.
-   - 이름: `fanstay`
-   - **프로젝트 ID**를 메모합니다(예: `fanstay-123456`). `.env.deploy`의 `GCP_PROJECT`에 넣습니다.
-3. **결제(Billing)** 메뉴에서 결제 계정을 만들고 카드를 등록한 뒤 프로젝트에 연결합니다.
-   - 신규 가입 무료 크레딧이 제공될 수 있습니다.
+1. [console.cloud.google.com](https://console.cloud.google.com)에 Google 계정으로 로그인하고, 안내에 따라 무료 체험을 시작합니다(카드 등록. $300 크레딧, 90일).
+2. **프로젝트는 Firebase 콘솔에서 만듭니다.** [console.firebase.google.com](https://console.firebase.google.com) → **프로젝트 만들기**
+   - 이름을 입력한 뒤 아래 칩의 연필 아이콘을 눌러 **프로젝트 ID**를 정합니다(예: `fanstay-app-2026`).
+   - Google 애널리틱스는 **사용 안 함**. 방문 통계는 자체 수집과 메타 픽셀로 봅니다.
+   - ⚠️ Google Cloud에서 먼저 만든 프로젝트에 나중에 Firebase를 붙이는 방법(`firebase projects:addfirebase`)은 소유자 권한으로도 403이 날 수 있습니다. 2026-09-20 배포 때 실제로 막혀, Firebase에서 만든 프로젝트로 전환했습니다.
+3. 만든 프로젝트에 **결제 계정을 연결**합니다.
+   - `https://console.cloud.google.com/billing/linkedaccount?project=<프로젝트 ID>` → **결제 계정 연결**
+   - 계정 목록의 필터는 계정 ID가 아니라 **이름**으로 검색됩니다.
+4. 프로젝트 ID를 `.env.deploy`의 `GCP_PROJECT`에 넣습니다. 현재 운영 프로젝트는 **`fanstay-app-2026`**(프로젝트 번호 970754328896)입니다.
 
 ## 2. 로컬 도구 준비 👤🤖
 
@@ -74,9 +77,7 @@ Git Bash 기준입니다.
    - `run.builder`: 소스 코드로 컨테이너를 빌드합니다.
    - `secretAccessor`: 실행 중인 서비스가 비밀값(SECRET_KEY, DB 주소)을 읽습니다.
    - 권한이 반영되는 데 몇 분 걸릴 수 있습니다.
-5. 👤 [Firebase 콘솔](https://console.firebase.google.com)에서 **프로젝트 추가 → 기존 Google Cloud 프로젝트 선택 → `fanstay`**를 고릅니다.
-   - Google 애널리틱스는 **사용 안 함**을 권장합니다. 방문 통계는 자체 수집과 메타 픽셀로 봅니다.
-   - 결제 계정이 연결된 프로젝트라 Blaze(종량제) 요금제로 표시됩니다. 무료 사용량은 그대로 적용됩니다.
+5. 프로젝트는 1단계에서 Firebase 콘솔로 만들었으므로 Hosting을 바로 쓸 수 있습니다. `firebase projects:list`로 확인합니다.
 
 ## 3. 운영 DB — Neon 👤🤖
 
@@ -119,13 +120,15 @@ cp deploy.env.example .env.deploy
 **관리자 계정 만들기** 👤 (운영 DB는 비어 있으므로 새로 만듭니다)
 ```bash
 cd backend
-set -a; source ../.env.deploy; set +a
-.venv/Scripts/python manage.py createsuperuser
+DATABASE_URL=$(grep '^DATABASE_URL=' ../.env.deploy | cut -d= -f2-) DJANGO_SECRET_KEY=x .venv/Scripts/python manage.py createsuperuser
 ```
+- 서버에 접속(SSH)하지 않습니다. 내 PC에서 운영 DB(Neon)에 직접 연결해 계정을 만듭니다.
+- `.env.deploy`를 `source`로 읽지 않는 이유: DB 주소에 `&`가 들어 있어 값이 잘립니다.
 
 **확인**
 ```bash
 curl https://<프로젝트 ID>.web.app/api/health/     # {"status": "ok"}
+# 현재 운영: https://fanstay-app-2026.web.app , 관리자 https://fanstay-api-970754328896.asia-northeast3.run.app/admin/
 ```
 - 브라우저에서 `https://<프로젝트 ID>.web.app`을 열고 테스트 가입을 1건 해 봅니다.
 - 관리자 `https://fanstay-api-….run.app/admin/` → **반응 통계**에서 방문·가입이 기록됐는지 확인합니다.

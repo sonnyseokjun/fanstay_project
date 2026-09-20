@@ -140,13 +140,14 @@
 | 이메일 | 필수 | 입력 | - |
 | 이름 | 선택 | 입력 | - |
 | 연령대 | 선택 | 하나 선택 | `under_20` `20_24` `25_29` `30_34` `35_39` `40_49` `50_plus` |
-| 가고 싶은 나라 | 선택 | 복수 선택 | `thailand` `vietnam` `indonesia` `japan` `malaysia` `taiwan` `europe` `other` |
+| 가 보고 싶은 나라 | 선택 | 직접 입력(최대 100자) | - |
 | 체류 형태 | 선택 | 하나 선택 | `remote_work` `working_holiday` `family` `long_stay` `break` `other` |
 | 이용 시기 | 선택 | 하나 선택 | `within_3_months` `3_6_months` `6_12_months` `after_1_year` `undecided` |
 | 관심 기능 | 선택 | 복수 선택 | `monthly_stay` `escrow` `city_match` `cost_estimate` `checklist` `infra_map` `community` `stay_review` |
 | 한 달 예산(항공권 제외) | 선택 | 하나 선택 | `under_100` `100_150` `150_200` `200_300` `over_300` `not_sure` (만 원) |
 | 개인정보 수집·이용 동의 | 필수 | 체크박스 + 안내문 | - |
 
+- "가 보고 싶은 나라"는 선택지로 제한하지 않고 직접 입력받는다(2026-09-20 변경). 처음 여는 네 도시 밖의 수요도 함께 보기 위해서다. 관리자 통계에서는 같은 문자열끼리 묶어 많이 적힌 순으로 보여 준다.
 - "체류 형태"는 PDF 6번의 타겟 세그먼트를 확인하기 위해 추가한 설문이다.
 - 같은 이메일로 다시 가입하면 새로 저장하지 않고 기존 순번을 돌려준다.
 

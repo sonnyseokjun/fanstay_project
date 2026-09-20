@@ -52,9 +52,9 @@ export default function App() {
     scrollToSignup()
   }
 
-  const handleChooseCity = (country: CountryCode) => {
+  const handleChooseCity = (code: CountryCode, country: string) => {
     setPreselect({ country, nonce: Date.now() })
-    handleCta(`price_${country}`)
+    handleCta(`price_${code}`)
   }
 
   const handleDone = (next: SignupResult) => {
