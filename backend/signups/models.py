@@ -39,16 +39,6 @@ class PreRegistration(models.Model):
         OVER_300 = "over_300", "300만 원 이상"
         NOT_SURE = "not_sure", "잘 모르겠음"
 
-    COUNTRY_CHOICES = {
-        "thailand": "태국",
-        "vietnam": "베트남",
-        "indonesia": "인도네시아",
-        "japan": "일본",
-        "malaysia": "말레이시아",
-        "taiwan": "대만",
-        "europe": "유럽",
-        "other": "기타",
-    }
     FEATURE_CHOICES = {
         "monthly_stay": "월 단위 숙소",
         "escrow": "에스크로 안전 결제",
@@ -63,7 +53,7 @@ class PreRegistration(models.Model):
     email = models.EmailField("이메일", max_length=254, unique=True)
     name = models.CharField("이름", max_length=50, blank=True)
     age_range = models.CharField("연령대", max_length=20, choices=AgeRange.choices, blank=True)
-    countries = models.JSONField("가고 싶은 나라", default=list, blank=True)
+    countries = models.CharField("가 보고 싶은 나라", max_length=100, blank=True)
     stay_type = models.CharField("체류 형태", max_length=20, choices=StayType.choices, blank=True)
     timing = models.CharField("이용 시기", max_length=20, choices=Timing.choices, blank=True)
     features = models.JSONField("관심 기능", default=list, blank=True)

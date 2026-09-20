@@ -15,7 +15,6 @@ export const ko: Content = {
     title: '여행 말고,\n한 달 살아 보기',
     lead: '월 단위 숙소와 안전 결제, 도착한 다음 날부터 필요한 생활 정보까지. 해외 한 달 살기 준비를 팬스테이 한 곳에서 끝내세요.',
     cta: '사전가입하기',
-    note: '치앙마이, 다낭, 발리, 후쿠오카부터 시작합니다',
     calendar: {
       alt: '치앙마이에서 11월 한 달을 보내는 달력. 1일 체크인부터 30일 체크아웃까지 형광펜으로 칠해져 있고, 유심 개통, 코워킹, 주말 야시장, 병원 검진 같은 생활 일정이 적혀 있다.',
       city: '치앙마이',
@@ -202,17 +201,9 @@ export const ko: Content = {
       ],
     },
     countries: {
-      label: '가 보고 싶은 나라 (여러 개 선택)',
-      options: [
-        { value: 'thailand', label: '태국' },
-        { value: 'vietnam', label: '베트남' },
-        { value: 'indonesia', label: '인도네시아' },
-        { value: 'japan', label: '일본' },
-        { value: 'malaysia', label: '말레이시아' },
-        { value: 'taiwan', label: '대만' },
-        { value: 'europe', label: '유럽' },
-        { value: 'other', label: '기타' },
-      ],
+      label: '가 보고 싶은 나라',
+      placeholder: '예: 태국, 일본',
+      hint: '여러 나라면 쉼표로 구분해 주세요.',
     },
     surveyLegend: '간단한 설문',
     surveyIntro: '모두 선택 항목이에요.',

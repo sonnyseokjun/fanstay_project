@@ -14,7 +14,6 @@ export function Hero({ onCta }: { onCta: () => void }) {
           <button type="button" className="button" onClick={onCta}>
             {h.cta}
           </button>
-          <p className="hero__note">{h.note}</p>
         </div>
       </div>
       <StayCalendar calendar={h.calendar} />

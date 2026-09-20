@@ -1,6 +1,6 @@
 import { useEffect, useId, useState, type FormEvent } from 'react'
 import { ko as t } from '../content/ko'
-import type { CountryCode, FeatureCode, Option } from '../content/types'
+import type { FeatureCode, Option } from '../content/types'
 import { submitSignup, type SignupError, type SignupResult } from '../lib/api'
 import { getVisitorId } from '../lib/track'
 
@@ -8,7 +8,7 @@ const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 type Errors = Partial<Record<'email' | 'consent' | 'form', string>>
 
-export type Preselect = { country: CountryCode; nonce: number } | null
+export type Preselect = { country: string; nonce: number } | null
 
 export function SignupForm({ preselect, onDone }: { preselect: Preselect; onDone: (result: SignupResult) => void }) {
   const s = t.signup
@@ -17,7 +17,7 @@ export function SignupForm({ preselect, onDone }: { preselect: Preselect; onDone
   const [email, setEmail] = useState('')
   const [name, setName] = useState('')
   const [age, setAge] = useState('')
-  const [countries, setCountries] = useState<CountryCode[]>([])
+  const [countries, setCountries] = useState('')
   const [stayType, setStayType] = useState('')
   const [timing, setTiming] = useState('')
   const [features, setFeatures] = useState<FeatureCode[]>([])
@@ -26,10 +26,13 @@ export function SignupForm({ preselect, onDone }: { preselect: Preselect; onDone
   const [errors, setErrors] = useState<Errors>({})
   const [submitting, setSubmitting] = useState(false)
 
-  // 가격 예시의 "이 도시로 사전가입" 버튼을 누르면 그 나라를 미리 선택한다.
+  // 가격 예시의 "이 도시로 사전가입" 버튼을 누르면 그 나라를 입력란에 채워 둔다.
   useEffect(() => {
     if (!preselect) return
-    setCountries((prev) => (prev.includes(preselect.country) ? prev : [...prev, preselect.country]))
+    setCountries((prev) => {
+      const parts = prev.split(',').map((v) => v.trim()).filter(Boolean)
+      return parts.includes(preselect.country) ? prev : [...parts, preselect.country].join(', ')
+    })
   }, [preselect])
 
   // 값을 고치면 해당 항목과 전체 에러를 지운다.
@@ -60,7 +63,7 @@ export function SignupForm({ preselect, onDone }: { preselect: Preselect; onDone
         email: email.trim(),
         name: name.trim(),
         age_range: age,
-        countries,
+        countries: countries.trim(),
         stay_type: stayType,
         timing,
         features,
@@ -147,7 +150,24 @@ export function SignupForm({ preselect, onDone }: { preselect: Preselect; onDone
           <SelectField id={`${uid}-age`} label={s.age.label} tag={s.optional} placeholder={s.age.placeholder} options={s.age.options} value={age} onChange={setAge} />
         </div>
 
-        <ChipGroup label={s.countries.label} tag={s.optional} options={s.countries.options} selected={countries} onChange={setCountries} />
+        <div className="field">
+          <label className="field__label" htmlFor={`${uid}-countries`}>
+            {s.countries.label} <span className="tag">{s.optional}</span>
+          </label>
+          <input
+            id={`${uid}-countries`}
+            className="input"
+            type="text"
+            maxLength={100}
+            placeholder={s.countries.placeholder}
+            value={countries}
+            onChange={(e) => setCountries(e.target.value)}
+            aria-describedby={`${uid}-countries-hint`}
+          />
+          <p className="form__hint" id={`${uid}-countries-hint`}>
+            {s.countries.hint}
+          </p>
+        </div>
 
         <fieldset className="form__survey">
           <legend className="form__legend">{s.surveyLegend}</legend>

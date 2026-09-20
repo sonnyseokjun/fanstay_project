@@ -23,7 +23,6 @@ export type Content = {
     title: string
     lead: string
     cta: string
-    note: string
     calendar: {
       alt: string
       city: string
@@ -81,7 +80,7 @@ export type Content = {
     email: { label: string; placeholder: string }
     name: { label: string; placeholder: string }
     age: { label: string; placeholder: string; options: Option[] }
-    countries: { label: string; options: Option<CountryCode>[] }
+    countries: { label: string; placeholder: string; hint: string }
     surveyLegend: string
     surveyIntro: string
     stayType: { label: string; placeholder: string; options: Option[] }

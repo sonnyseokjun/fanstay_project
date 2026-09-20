@@ -18,10 +18,19 @@ if [ ! -f .env.deploy ]; then
   echo "❌ .env.deploy 가 없습니다. cp deploy.env.example .env.deploy 후 값을 채우세요." >&2
   exit 1
 fi
-set -a
-# shellcheck disable=SC1091
-source .env.deploy
-set +a
+# .env.deploy 읽기. 값에 &, ?, 공백이 있어도 안전하도록 줄 단위로 읽는다(source 쓰지 않음).
+while IFS= read -r line || [ -n "$line" ]; do
+  line="${line%$'\r'}"                      # 윈도우 줄바꿈 제거
+  case "$line" in '' | '#'*) continue ;; esac
+  case "$line" in *=*) ;; *) continue ;; esac
+  key="${line%%=*}"
+  value="${line#*=}"
+  value="${value%\"}"
+  value="${value#\"}"
+  value="${value%\'}"
+  value="${value#\'}"
+  export "$key=$value"
+done < .env.deploy
 
 require() {
   for name in "$@"; do

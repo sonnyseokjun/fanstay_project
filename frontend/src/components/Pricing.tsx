@@ -2,7 +2,7 @@ import { ko as t } from '../content/ko'
 import type { CountryCode } from '../content/types'
 import { SectionHead } from './SectionHead'
 
-export function Pricing({ onChoose }: { onChoose: (country: CountryCode) => void }) {
+export function Pricing({ onChoose }: { onChoose: (code: CountryCode, country: string) => void }) {
   const p = t.pricing
   return (
     <section className="section pricing" aria-labelledby="pricing-title">
@@ -30,7 +30,7 @@ export function Pricing({ onChoose }: { onChoose: (country: CountryCode) => void
               </div>
             </dl>
             <p className="bill__basis">{c.basis}</p>
-            <button type="button" className="button button--ghost button--block" onClick={() => onChoose(c.code)}>
+            <button type="button" className="button button--ghost button--block" onClick={() => onChoose(c.code, c.country)}>
               {p.cta}
             </button>
           </li>

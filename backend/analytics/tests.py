@@ -59,7 +59,7 @@ class AdminStatsViewTests(TestCase):
         Event.objects.create(event_type="cta_click", visitor_id="v1", label="hero")
         PreRegistration.objects.create(
             email="a@example.com", consent=True,
-            countries=["thailand", "japan"], budget_range="150_200", stay_type="remote_work",
+            countries="태국, 일본", budget_range="150_200", stay_type="remote_work",
         )
         self.client.force_login(self.staff)
         res = self.client.get("/admin/stats/?days=7")

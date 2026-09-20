@@ -15,7 +15,7 @@ class PreRegistrationApiTests(APITestCase):
             "email": "Test@Example.com",
             "name": "김팬스",
             "age_range": "25_29",
-            "countries": ["thailand", "japan"],
+            "countries": "태국, 일본",
             "stay_type": "remote_work",
             "timing": "3_6_months",
             "features": ["monthly_stay", "escrow"],
@@ -32,7 +32,7 @@ class PreRegistrationApiTests(APITestCase):
         self.assertEqual(res.json(), {"position": 1, "created": True})
         signup = PreRegistration.objects.get()
         self.assertEqual(signup.email, "test@example.com")
-        self.assertEqual(signup.countries, ["thailand", "japan"])
+        self.assertEqual(signup.countries, "태국, 일본")
         self.assertEqual(signup.features, ["monthly_stay", "escrow"])
 
     def test_email_and_consent_are_enough(self):
@@ -58,12 +58,10 @@ class PreRegistrationApiTests(APITestCase):
         self.assertEqual(res.json()["email"], ["invalid_email"])
 
     def test_rejects_unknown_choices(self):
-        res = self.client.post(URL, self.payload(countries=["mars"]), format="json")
-        self.assertEqual(res.status_code, 400)
         res = self.client.post(URL, self.payload(budget_range="999"), format="json")
         self.assertEqual(res.status_code, 400)
 
-    def test_deduplicates_multi_select(self):
-        self.client.post(URL, self.payload(countries=["japan", "japan"], features=["escrow", "escrow"]), format="json")
+    def test_trims_country_text_and_deduplicates_features(self):
+        self.client.post(URL, self.payload(countries="  베트남  ", features=["escrow", "escrow"]), format="json")
         signup = PreRegistration.objects.get()
-        self.assertEqual((signup.countries, signup.features), (["japan"], ["escrow"]))
+        self.assertEqual((signup.countries, signup.features), ("베트남", ["escrow"]))

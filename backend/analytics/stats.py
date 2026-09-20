@@ -42,9 +42,8 @@ def summarize(days=None):
     clickers = cta_clicks.values("visitor_id").distinct().count()
     signup_count = signups.count()
 
-    countries, features = Counter(), Counter()
-    for row in signups.values("countries", "features"):
-        countries.update(row["countries"])
+    features = Counter()
+    for row in signups.values("features"):
         features.update(row["features"])
 
     return {
@@ -61,7 +60,11 @@ def summarize(days=None):
             for row in cta_clicks.values("label").annotate(n=Count("id")).order_by("-n")
         ],
         "age_ranges": _choice_counts(signups, "age_range", PreRegistration.AgeRange.choices),
-        "countries": _ranked(countries, PreRegistration.COUNTRY_CHOICES),
+        # 직접 입력 항목이라 같은 문자열끼리만 묶어 많이 적힌 순으로 보여 준다
+        "countries": [
+            {"label": row["countries"], "n": row["n"]}
+            for row in signups.exclude(countries="").values("countries").annotate(n=Count("id")).order_by("-n")[:12]
+        ],
         "stay_types": _choice_counts(signups, "stay_type", PreRegistration.StayType.choices),
         "timings": _choice_counts(signups, "timing", PreRegistration.Timing.choices),
         "features": _ranked(features, PreRegistration.FEATURE_CHOICES),
