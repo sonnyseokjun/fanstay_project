@@ -11,7 +11,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, days=None, **options):
         s = summarize(days)
-        self.stdout.write(f"[FANSTAY 반응 요약 · {s['period']}]")
+        self.stdout.write(f"[한달다움 반응 요약 · {s['period']}]")
         self.stdout.write(f"방문자 수(중복 제거)      {s['visitors']}")
         self.stdout.write(f"페이지 조회 수            {s['page_views']}")
         self.stdout.write(

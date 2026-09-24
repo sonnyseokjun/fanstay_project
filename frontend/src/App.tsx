@@ -9,7 +9,6 @@ import { Hero } from './components/Hero'
 import { Pricing } from './components/Pricing'
 import { Problems } from './components/Problems'
 import type { Preselect } from './components/SignupForm'
-import { Solution } from './components/Solution'
 import { ThankYou } from './components/ThankYou'
 import { ko as t } from './content/ko'
 import type { CountryCode } from './content/types'
@@ -92,7 +91,6 @@ export default function App() {
         <main>
           <Hero preselect={preselect} onDone={handleDone} />
           <Problems />
-          <Solution />
           <Features />
           <Flow />
           <Pricing onChoose={handleChooseCity} />

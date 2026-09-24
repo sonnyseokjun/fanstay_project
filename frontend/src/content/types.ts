@@ -5,24 +5,13 @@ export type Option<T extends string = string> = { value: T; label: string }
 
 export type CountryCode = 'korea' | 'japan' | 'thailand' | 'vietnam'
 export type Content = {
-  meta: { title: string; description: string }
-  header: { home: string; cta: string; skipToForm: string; toLight: string; toDark: string }
-  hero: { title: string; lead: string; photoAlt: string }
+  meta: { title: string; description: string; ogTitle: string; ogDescription: string } // index.html에 빌드 때 채워진다
+  header: { home: string; cta: string; skipToForm: string }
+  hero: { title: string; lead: string; photoAlt: string; characterAlt: string }
   problems: {
     title: string
     intro: string
     items: { topic: string; title: string; body: string; evidence: string; source: string }[]
-  }
-  solution: {
-    title: string
-    intro: string
-    matrix: {
-      caption: string
-      conditions: [string, string, string]
-      yes: string
-      no: string
-      rows: { name: string; marks: [boolean, boolean, boolean]; note: string; ours?: boolean }[]
-    }
   }
   features: {
     title: string
