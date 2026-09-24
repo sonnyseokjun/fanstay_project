@@ -1,68 +1,34 @@
-/* FANSTAY 사전가입
-   디자인 기준: design-taste-frontend 스킬. 사진 중심, 글꼴은 Pretendard 하나, 강조색은 --accent 하나.
+/* 한달다움 사전가입
+   디자인 기준: design-taste-frontend 스킬. 파스텔 브라운이 메인 컬러, 글꼴은 Pretendard 하나, 라이트 모드 고정.
    토큰은 여기 :root에만 둔다. 새 색을 즉흥적으로 추가하지 않는다.
-   모서리: 입력·버튼 --r-sm(10px), 카드·사진 --r-lg(18px), 칩만 알약형. */
+   - 면: --bg(크림) / --surface(카드) / --surface-2(옅은 구획) / --band(파스텔 브라운 띠·강조 면)
+   - 강조: --accent(브라운) 하나. 버튼·필수 표시·합계 금액·선택 상태.
+   모서리: 입력·버튼 --r-sm(12px), 카드·사진 --r-lg(22px), 칩만 알약형. */
 
 :root {
   color-scheme: light;
-  --bg: #f4f5f3; /* 페이지 배경 */
-  --surface: #fcfcfb; /* 폼·표·카드 면 */
-  --surface-2: #eaece8; /* 옅은 구획 */
-  --text: #16181b;
-  --text-2: #464c54; /* 본문 보조 */
-  --text-3: #62686f; /* 힌트·출처 */
-  --line: #d6d9d3;
-  --accent: #c2410c; /* 버튼·강조 (하나뿐) */
-  --accent-hover: #a5370a;
-  --accent-ink: #fff8f3; /* 강조색 위 글자 */
-  --accent-soft: #f9e4d8; /* 강조색을 옅게 깐 면 */
+  --bg: #faf6f1; /* 페이지 배경 (크림) */
+  --surface: #fffdfa; /* 폼·카드 면 */
+  --surface-2: #f3eadf; /* 옅은 구획(동의 안내, 근거 인용, 푸터) */
+  --band: #ecdcc9; /* 파스텔 브라운: 히어로 띠, 강조 칸 */
+  --text: #3a2c24; /* 제목·본문 (진한 브라운) */
+  --text-2: #62524a; /* 본문 보조 */
+  --text-3: #6e5d52; /* 힌트·출처 */
+  --line: #e4d5c5;
+  --accent: #8a5a3b; /* 버튼·강조 (하나뿐) */
+  --accent-hover: #734a2f;
+  --accent-ink: #fffaf4; /* 강조색 위 글자 */
+  --accent-soft: #f1e0cd; /* 강조색을 옅게 깐 면 */
   --danger: #b42318;
-  --shadow: 0 1px 2px rgb(40 30 20 / 0.05), 0 12px 32px -12px rgb(40 30 20 / 0.14);
+  --shadow: 0 1px 2px rgb(90 60 40 / 0.06), 0 14px 36px -14px rgb(90 60 40 / 0.22);
 
   --font: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
   --gutter: 20px;
   --max: 1200px;
   --section-space: clamp(72px, 10vw, 120px);
-  --r-sm: 10px;
-  --r-lg: 18px;
+  --r-sm: 12px;
+  --r-lg: 22px;
   --ease: cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-/* 다크 모드: 기기 설정을 따르고, 헤더의 전환 버튼으로 고르면(data-theme) 그 값이 우선한다. */
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme='light']) {
-    color-scheme: dark;
-    --bg: #121416;
-    --surface: #1a1d20;
-    --surface-2: #202428;
-    --text: #eceeed;
-    --text-2: #b5bbc1;
-    --text-3: #959ca3;
-    --line: #30353a;
-    --accent: #f07a3f;
-    --accent-hover: #f5935f;
-    --accent-ink: #1a1209;
-    --accent-soft: #3a2519;
-    --danger: #f97066;
-    --shadow: 0 1px 2px rgb(0 0 0 / 0.3), 0 16px 40px -16px rgb(0 0 0 / 0.6);
-  }
-}
-
-:root[data-theme='dark'] {
-  color-scheme: dark;
-  --bg: #121416;
-  --surface: #1a1d20;
-  --surface-2: #202428;
-  --text: #eceeed;
-  --text-2: #b5bbc1;
-  --text-3: #959ca3;
-  --line: #30353a;
-  --accent: #f07a3f;
-  --accent-hover: #f5935f;
-  --accent-ink: #1a1209;
-  --accent-soft: #3a2519;
-  --danger: #f97066;
-  --shadow: 0 1px 2px rgb(0 0 0 / 0.3), 0 16px 40px -16px rgb(0 0 0 / 0.6);
 }
 
 @media (min-width: 768px) {
@@ -243,8 +209,8 @@ select {
   position: sticky;
   top: 0;
   z-index: 10;
-  background: color-mix(in srgb, var(--bg) 92%, transparent);
-  border-bottom: 1px solid var(--line);
+  background: color-mix(in srgb, var(--band) 92%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--text) 8%, transparent);
   backdrop-filter: saturate(160%) blur(10px);
   -webkit-backdrop-filter: saturate(160%) blur(10px);
 }
@@ -256,34 +222,6 @@ select {
   width: min(100% - 2 * var(--gutter), var(--max));
   height: 64px;
   margin-inline: auto;
-}
-
-.site-header__actions {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.theme-toggle {
-  display: grid;
-  place-items: center;
-  width: 40px;
-  height: 40px;
-  border: 1px solid var(--line);
-  border-radius: var(--r-sm);
-  background: transparent;
-  color: var(--text);
-  cursor: pointer;
-  transition: border-color 0.2s var(--ease), background-color 0.2s var(--ease);
-}
-
-.theme-toggle:hover {
-  border-color: var(--text-3);
-  background: var(--surface-2);
-}
-
-.theme-toggle:active {
-  transform: translateY(1px);
 }
 
 .site-header__home {
@@ -355,10 +293,30 @@ select {
 
 /* ---------- 히어로 + 사전가입 폼 ---------- */
 
+/* 히어로는 파스텔 브라운 띠 위에 올린다 */
+.hero-band {
+  background: var(--band);
+  padding-bottom: 40px;
+}
+
 .hero {
   display: grid;
-  gap: 32px;
-  padding-top: 32px;
+  gap: 28px;
+  padding-top: 28px;
+}
+
+.hero__heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.hero__character {
+  flex: none;
+  width: clamp(96px, 26vw, 128px);
+  height: auto;
+  margin-bottom: -4px;
 }
 
 .hero__intro {
@@ -386,11 +344,24 @@ select {
 }
 
 @media (min-width: 960px) {
+  .hero-band {
+    padding-bottom: 72px;
+  }
+
   .hero {
     grid-template-columns: minmax(0, 1fr) minmax(0, 480px);
     gap: clamp(40px, 5vw, 72px);
     align-items: start;
     padding-top: 56px;
+  }
+
+  .hero__heading {
+    justify-content: flex-start;
+    gap: clamp(16px, 2vw, 32px);
+  }
+
+  .hero__character {
+    width: clamp(140px, 13vw, 184px);
   }
 
   /* 폼이 길어서 왼쪽(제목·사진)은 화면에 붙여 둔다. */
@@ -664,107 +635,6 @@ select {
   }
 }
 
-/* ---------- 솔루션 비교표 ---------- */
-
-.matrix-wrap {
-  border: 1px solid var(--line);
-  border-radius: var(--r-lg);
-  background: var(--surface);
-  overflow: hidden;
-}
-
-.matrix {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 15px;
-}
-
-.matrix__caption {
-  padding: 16px 20px;
-  border-bottom: 1px solid var(--line);
-  color: var(--text-3);
-  font-size: 13px;
-  text-align: left;
-}
-
-.matrix th,
-.matrix td {
-  padding: 14px 8px;
-  text-align: center;
-  vertical-align: middle;
-}
-
-.matrix thead th {
-  width: 16%;
-  color: var(--text-2);
-  font-size: 12px;
-  font-weight: 600;
-  line-height: 1.35;
-}
-
-.matrix tbody tr {
-  border-top: 1px solid var(--line);
-}
-
-.matrix tbody th {
-  display: grid;
-  gap: 2px;
-  padding-left: 16px;
-  text-align: left;
-}
-
-.matrix__name {
-  font-weight: 700;
-}
-
-.matrix__note {
-  color: var(--text-3);
-  font-size: 13px;
-  font-weight: 400;
-  line-height: 1.45;
-}
-
-.matrix .is-yes {
-  color: var(--text);
-}
-
-.matrix .is-no {
-  color: var(--text-3);
-}
-
-.matrix svg {
-  display: inline-block;
-  vertical-align: middle;
-}
-
-.matrix__ours {
-  background: var(--accent-soft);
-}
-
-.matrix__ours .is-yes {
-  color: var(--accent);
-}
-
-@media (min-width: 768px) {
-  .matrix th,
-  .matrix td {
-    padding: 18px 16px;
-  }
-
-  .matrix tbody th {
-    padding-left: 24px;
-  }
-
-  .matrix thead th {
-    width: 18%;
-    font-size: 14px;
-  }
-
-  .matrix__caption {
-    padding: 18px 24px;
-  }
-}
-
 /* ---------- 주요 기능 (벤토) ---------- */
 
 .bento {
@@ -801,7 +671,7 @@ select {
 }
 
 .bento__cell--stay {
-  background: var(--accent-soft);
+  background: var(--band);
   border-color: transparent;
 }
 
@@ -986,8 +856,8 @@ select {
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: var(--text);
-  color: var(--bg);
+  background: var(--accent);
+  color: var(--accent-ink);
   font-weight: 700;
   font-variant-numeric: tabular-nums;
 }
@@ -1032,6 +902,15 @@ select {
 }
 
 /* ---------- 가격 예시 ---------- */
+
+/* 가격 섹션은 화면 폭 전체에 파스텔 브라운 띠를 깐다 */
+.pricing {
+  margin-top: var(--section-space);
+  padding-block: var(--section-space);
+  background: var(--band);
+  box-shadow: 0 0 0 100vmax var(--band);
+  clip-path: inset(0 -100vmax);
+}
 
 .pricing__list {
   display: grid;
@@ -1149,7 +1028,7 @@ select {
 
 .pricing__note {
   margin-top: 20px;
-  color: var(--text-3);
+  color: var(--text-2);
   font-size: 14px;
   max-width: 65ch;
 }

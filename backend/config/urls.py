@@ -6,8 +6,8 @@ from analytics.views import EventCreateView
 from analytics.views_admin import stats_view
 from signups.views import PreRegistrationCreateView
 
-admin.site.site_header = "FANSTAY 사전가입 관리"
-admin.site.site_title = "FANSTAY 관리"
+admin.site.site_header = "한달다움 사전가입 관리"
+admin.site.site_title = "한달다움 관리"
 admin.site.index_template = "admin/fanstay_index.html"
 
 

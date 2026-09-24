@@ -1,4 +1,4 @@
-# FANSTAY 배포 가이드 — Cloud Run(서울) + Firebase Hosting
+# 한달다움 배포 가이드 — Cloud Run(서울) + Firebase Hosting
 
 사전가입 사이트를 **서버리스로만** 배포하는 전체 과정입니다. 처음에는 0단계부터 순서대로 하고, 이후 업데이트는 [9. 운영](#9-운영-업데이트롤백db-변경)만 보면 됩니다.
 

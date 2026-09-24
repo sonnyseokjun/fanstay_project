@@ -1,4 +1,4 @@
-# FANSTAY 백엔드 컨테이너 (Google Cloud Run, 서울 리전)
+# 한달다움 백엔드 컨테이너 (Google Cloud Run, 서울 리전)
 # Django API(/api)와 관리자(/admin)만 담는다. 사이트 화면은 Firebase Hosting이 제공한다.
 #
 #   docker build -t fanstay-api .

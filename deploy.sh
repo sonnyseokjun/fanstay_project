@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# FANSTAY 배포 스크립트 — Cloud Run(서울, API·관리자) + Firebase Hosting(사이트 화면)
+# 한달다움 배포 스크립트 — Cloud Run(서울, API·관리자) + Firebase Hosting(사이트 화면)
 #
 #   ./deploy.sh secrets   .env.deploy의 SECRET_KEY·DATABASE_URL을 Secret Manager에 등록(처음 1회, 값을 바꿀 때)
 #   ./deploy.sh migrate   운영 DB에 테이블 생성·변경 반영 (로컬에서 실행)
