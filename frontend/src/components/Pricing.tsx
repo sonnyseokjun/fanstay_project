@@ -1,12 +1,12 @@
-import bali from '../assets/photos/bali.webp'
 import chiangmai from '../assets/photos/chiangmai.webp'
 import danang from '../assets/photos/danang.webp'
 import fukuoka from '../assets/photos/fukuoka.webp'
+import jeju from '../assets/photos/jeju.webp'
 import { ko as t } from '../content/ko'
 import type { CountryCode } from '../content/types'
 import { SectionHead } from './SectionHead'
 
-const PHOTO: Partial<Record<CountryCode, string>> = { thailand: chiangmai, vietnam: danang, indonesia: bali, japan: fukuoka }
+const PHOTO: Record<CountryCode, string> = { korea: jeju, japan: fukuoka, thailand: chiangmai, vietnam: danang }
 
 export function Pricing({ onChoose }: { onChoose: (code: CountryCode, country: string) => void }) {
   const p = t.pricing
@@ -38,7 +38,7 @@ export function Pricing({ onChoose }: { onChoose: (code: CountryCode, country: s
                 </div>
               </dl>
               <p className="bill__basis">{c.basis}</p>
-              <button type="button" className="button button--ghost button--block" onClick={() => onChoose(c.code, c.country)}>
+              <button type="button" className="button button--ghost button--block" onClick={() => onChoose(c.code, c.pick)}>
                 {p.cta}
               </button>
             </div>

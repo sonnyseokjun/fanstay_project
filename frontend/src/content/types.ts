@@ -3,7 +3,7 @@
 
 export type Option<T extends string = string> = { value: T; label: string }
 
-export type CountryCode = 'thailand' | 'vietnam' | 'indonesia' | 'japan' | 'malaysia' | 'taiwan' | 'europe' | 'other'
+export type CountryCode = 'korea' | 'japan' | 'thailand' | 'vietnam'
 export type FeatureCode =
   | 'monthly_stay'
   | 'escrow'
@@ -61,6 +61,7 @@ export type Content = {
       living: string
       total: string
       basis: string
+      pick: string // "이 도시로 사전가입"을 누르면 폼의 '가 보고 싶은 곳'에 채울 값
       photoAlt: string
     }[]
     cta: string
