@@ -14,25 +14,10 @@ export type FeatureCode =
   | 'community'
   | 'stay_review'
 
-export type CalendarNote = { day: number; label: string; short: string } // short: 좁은 화면용
-
 export type Content = {
   meta: { title: string; description: string }
-  header: { home: string; cta: string; skipToForm: string }
-  hero: {
-    title: string
-    lead: string
-    cta: string
-    calendar: {
-      alt: string
-      city: string
-      year: number
-      month: number // 1~12
-      weekdays: string[]
-      notes: CalendarNote[]
-      legend: string
-    }
-  }
+  header: { home: string; cta: string; skipToForm: string; toLight: string; toDark: string }
+  hero: { title: string; lead: string; photoAlt: string }
   problems: {
     title: string
     intro: string
@@ -53,6 +38,7 @@ export type Content = {
     title: string
     intro: string
     items: { key: 'stay' | 'escrow' | 'ai' | 'life'; title: string; body: string }[]
+    lifePhotoAlt: string
     escrowSteps: string[]
     escrowCaption: string
     cities: { title: string; intro: string; list: { name: string; country: string; note: string }[] }
@@ -67,7 +53,16 @@ export type Content = {
     intro: string
     note: string
     labels: { stay: string; living: string; total: string; perMonth: string }
-    cities: { code: CountryCode; city: string; country: string; stay: string; living: string; total: string; basis: string }[]
+    cities: {
+      code: CountryCode
+      city: string
+      country: string
+      stay: string
+      living: string
+      total: string
+      basis: string
+      photoAlt: string
+    }[]
     cta: string
   }
   signup: {
@@ -99,7 +94,7 @@ export type Content = {
     }
   }
   faq: { title: string; items: { q: string; a: string }[] }
-  footer: { tagline: string; notice: string; copyright: string }
+  footer: { tagline: string; notice: string; photoCredit: string; copyright: string }
   thanks: {
     title: string
     position: (n: number) => string

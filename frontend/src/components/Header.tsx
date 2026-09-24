@@ -1,4 +1,5 @@
 import { ko as t } from '../content/ko'
+import { ThemeToggle } from './ThemeToggle'
 import { Wordmark } from './Wordmark'
 
 export function Header({ onCta, onHome }: { onCta: () => void; onHome: () => void }) {
@@ -16,9 +17,12 @@ export function Header({ onCta, onHome }: { onCta: () => void; onHome: () => voi
         >
           <Wordmark />
         </a>
-        <button type="button" className="button button--small" onClick={onCta}>
-          {t.header.cta}
-        </button>
+        <div className="site-header__actions">
+          <ThemeToggle />
+          <button type="button" className="button button--small" onClick={onCta}>
+            {t.header.cta}
+          </button>
+        </div>
       </div>
     </header>
   )

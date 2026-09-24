@@ -7,8 +7,9 @@ export function Footer() {
       <div className="site-footer__inner">
         <Wordmark />
         <p>{t.footer.tagline}</p>
-        <p className="site-footer__notice">{t.footer.notice}</p>
-        <p className="site-footer__copy">{t.footer.copyright}</p>
+        <p className="site-footer__small">{t.footer.notice}</p>
+        <p className="site-footer__small">{t.footer.photoCredit}</p>
+        <p className="site-footer__small">{t.footer.copyright}</p>
       </div>
     </footer>
   )

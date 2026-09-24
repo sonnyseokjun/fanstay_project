@@ -1,6 +1,6 @@
+import { ShareNetwork } from '@phosphor-icons/react'
 import { useEffect, useRef, useState } from 'react'
 import { ko as t } from '../content/ko'
-import { Icon } from '../illustrations/icons'
 import type { SignupResult } from '../lib/api'
 
 export function ThankYou({ result, onBack }: { result: SignupResult; onBack: () => void }) {
@@ -45,7 +45,7 @@ export function ThankYou({ result, onBack }: { result: SignupResult; onBack: () 
         <p className="thanks__body">{th.body}</p>
         <div className="thanks__actions">
           <button type="button" className="button" onClick={share}>
-            <Icon name="share" size={18} />
+            <ShareNetwork size={20} aria-hidden="true" />
             {th.share}
           </button>
           <button type="button" className="text-button" onClick={onBack}>

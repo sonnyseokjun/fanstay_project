@@ -4,36 +4,17 @@ import type { Content } from './types'
 
 export const ko: Content = {
   meta: {
-    title: 'FANSTAY 팬스테이 — 해외 한 달 살기, 숙소부터 현지 생활까지',
+    title: 'FANSTAY 팬스테이 | 해외 한 달 살기, 숙소부터 현지 생활까지',
     description:
       '월 단위 숙소, 에스크로 안전 결제, 도시 추천과 현지 생활 정보까지. 해외 한 달 살기를 준비하는 한국인을 위한 팬스테이 사전가입.',
   },
 
-  header: { home: 'FANSTAY 처음으로', cta: '사전가입', skipToForm: '사전가입 폼으로 건너뛰기' },
+  header: { home: 'FANSTAY 처음으로', cta: '사전가입하기', skipToForm: '사전가입 폼으로 건너뛰기', toLight: '라이트 모드로 보기', toDark: '다크 모드로 보기' },
 
   hero: {
     title: '여행 말고,\n한 달 살아 보기',
-    lead: '월 단위 숙소와 안전 결제, 도착한 다음 날부터 필요한 생활 정보까지. 해외 한 달 살기 준비를 팬스테이 한 곳에서 끝내세요.',
-    cta: '사전가입하기',
-    calendar: {
-      alt: '치앙마이에서 11월 한 달을 보내는 달력. 1일 체크인부터 30일 체크아웃까지 형광펜으로 칠해져 있고, 유심 개통, 코워킹, 주말 야시장, 병원 검진 같은 생활 일정이 적혀 있다.',
-      city: '치앙마이',
-      year: 2026,
-      month: 11,
-      weekdays: ['일', '월', '화', '수', '목', '금', '토'],
-      notes: [
-        { day: 1, label: '체크인', short: '체크인' },
-        { day: 2, label: '유심 개통', short: '유심' },
-        { day: 3, label: '코워킹', short: '코워킹' },
-        { day: 7, label: '한인 마트', short: '장보기' },
-        { day: 8, label: '야시장', short: '야시장' },
-        { day: 13, label: '병원 검진', short: '병원' },
-        { day: 19, label: '한인 모임', short: '모임' },
-        { day: 25, label: '도이수텝', short: '등산' },
-        { day: 30, label: '체크아웃', short: '체크아웃' },
-      ],
-      legend: '체류 30일',
-    },
+    lead: '월 단위 숙소와 안전 결제, 현지 생활 정보까지. 해외 한 달 살기 준비를 한 곳에서 끝내세요.',
+    photoAlt: '창밖으로 도시가 내려다보이는 거실. 주황색 안락의자와 소파, 둥근 테이블이 놓여 있다.',
   },
 
   problems: {
@@ -76,7 +57,7 @@ export const ko: Content = {
         { name: '국내 한 달 살기 플랫폼', marks: [true, false, true], note: '매물이 제주·강릉·서울 등 국내에 집중' },
         { name: '글로벌 숙소 예약 앱', marks: [false, true, false], note: '1박 가격 기준, 비자·생활 정보 없음' },
         { name: '외국인 대상 한국 한 달 살기', marks: [false, false, true], note: '해외에서 한국으로 오는 반대 방향' },
-        { name: '블로그 · 카페 · 페이스북 그룹', marks: [true, true, false], note: '검증·결제·보상 체계가 없음' },
+        { name: '블로그, 카페, 페이스북 그룹', marks: [true, true, false], note: '검증·결제·보상 체계가 없음' },
         { name: '팬스테이', marks: [true, true, true], note: '월 단위 매물 + 안전 결제 + 비자·생활 정보 + 커뮤니티', ours: true },
       ],
     },
@@ -107,6 +88,7 @@ export const ko: Content = {
         body: '유심, 환전, 병원, 코워킹, 한인 마트를 도시별 지도 하나에 모았습니다. 같은 기간 같은 도시에 머무는 한국인과 연결되고, 후기는 1박 여행 후기가 아니라 한 달 거주 후기로 쌓입니다.',
       },
     ],
+    lifePhotoAlt: '카페 테이블에서 노트북으로 일하는 사람. 옆에 라테와 휴대폰, 펼친 책이 있다.',
     escrowSteps: ['내가 결제', '팬스테이가 보관', '체크인 확인', '호스트에게 정산'],
     escrowCaption: '에스크로 결제 흐름',
     cities: {
@@ -146,6 +128,7 @@ export const ko: Content = {
         living: '60~120만 원',
         total: '100~200만 원',
         basis: '님만해민 콘도 월 1.2~1.8만 바트',
+        photoAlt: '치앙마이 카페의 나무 테이블 위 라테 한 잔',
       },
       {
         code: 'vietnam',
@@ -155,6 +138,7 @@ export const ko: Content = {
         living: '50~90만 원',
         total: '100~190만 원',
         basis: '풀옵션 원룸·1베드 월 500~900달러',
+        photoAlt: '다낭 해변의 파라솔 아래 테이블에 놓인 책과 선글라스',
       },
       {
         code: 'indonesia',
@@ -164,6 +148,7 @@ export const ko: Content = {
         living: '70~120만 원',
         total: '130~270만 원',
         basis: '게스트하우스·아파트 기준, 풀빌라 제외',
+        photoAlt: '발리 우붓의 야자수와 계단식 논 사이를 걷는 사람',
       },
       {
         code: 'japan',
@@ -173,6 +158,7 @@ export const ko: Content = {
         living: '55~90만 원',
         total: '155~230만 원',
         basis: '먼슬리맨션 30일 11~15만 엔',
+        photoAlt: '후쿠오카 밤거리의 포장마차에 앉아 식사하는 사람들',
       },
     ],
     cta: '이 도시로 사전가입',
@@ -306,8 +292,9 @@ export const ko: Content = {
   },
 
   footer: {
-    tagline: '해외 한 달 살기를 준비하는 한국인을 위한 숙소 · 체류정보 · 생활 인프라 플랫폼. 지금은 사전가입을 받고 있습니다.',
+    tagline: '해외 한 달 살기를 준비하는 한국인을 위한 숙소, 체류정보, 생활 인프라 플랫폼. 지금은 사전가입을 받고 있습니다.',
     notice: '이 사이트는 방문 통계와 광고 효과 측정을 위해 자체 방문 기록과 메타 픽셀을 사용합니다.',
+    photoCredit: '후쿠오카 사진: Thomas Au (CC BY 2.0). 그 밖의 사진은 CC0입니다.',
     copyright: '© 2026 FANSTAY',
   },
 
