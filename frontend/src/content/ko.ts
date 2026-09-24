@@ -170,13 +170,21 @@ export const ko: Content = {
 
   signup: {
     title: '사전가입하고\n가장 먼저 받아 보세요',
-    intro: '서비스가 열리면 이메일로 가장 먼저 알려 드려요. 설문은 선택이지만, 답해 주시면 어떤 도시와 기능부터 준비할지 정하는 데 씁니다.',
+    intro: '서비스가 열리면 이메일로 가장 먼저 알려 드려요. 이메일 말고는 모두 선택이지만, 답해 주시면 어떤 도시부터 준비할지 정하는 데 씁니다.',
     benefitsTitle: '사전가입 혜택',
     benefits: [], // 미정 (plan.md 17번). 문구를 넣으면 폼 위에 표시된다.
     required: '필수',
     optional: '선택',
     email: { label: '이메일', placeholder: 'name@example.com' },
-    name: { label: '이름', placeholder: '불러 드릴 이름' },
+    gender: {
+      label: '성별',
+      placeholder: '선택하세요',
+      options: [
+        { value: 'female', label: '여성' },
+        { value: 'male', label: '남성' },
+        { value: 'no_answer', label: '밝히지 않음' },
+      ],
+    },
     age: {
       label: '연령대',
       placeholder: '선택하세요',
@@ -195,60 +203,10 @@ export const ko: Content = {
       placeholder: '예: 제주, 일본',
       hint: '여러 곳이면 쉼표로 구분해 주세요.',
     },
-    surveyLegend: '간단한 설문',
-    surveyIntro: '모두 선택 항목이에요.',
-    stayType: {
-      label: '어떤 한 달을 계획하고 있나요?',
-      placeholder: '선택하세요',
-      options: [
-        { value: 'remote_work', label: '원격근무·프리랜서' },
-        { value: 'working_holiday', label: '워킹홀리데이·어학연수' },
-        { value: 'family', label: '가족·자녀 동반' },
-        { value: 'long_stay', label: '은퇴·롱스테이' },
-        { value: 'break', label: '휴직·쉼' },
-        { value: 'other', label: '기타' },
-      ],
-    },
-    timing: {
-      label: '언제쯤 떠날 계획인가요?',
-      placeholder: '선택하세요',
-      options: [
-        { value: 'within_3_months', label: '3개월 안' },
-        { value: '3_6_months', label: '3~6개월 후' },
-        { value: '6_12_months', label: '6개월~1년 후' },
-        { value: 'after_1_year', label: '1년 이후' },
-        { value: 'undecided', label: '아직 모르겠음' },
-      ],
-    },
-    features: {
-      label: '가장 필요한 기능 (여러 개 선택)',
-      options: [
-        { value: 'monthly_stay', label: '월 단위 숙소' },
-        { value: 'escrow', label: '에스크로 안전 결제' },
-        { value: 'city_match', label: '도시 추천' },
-        { value: 'cost_estimate', label: '한 달 비용 계산' },
-        { value: 'checklist', label: '출국 준비 체크리스트' },
-        { value: 'infra_map', label: '생활 인프라 지도' },
-        { value: 'community', label: '체류자 커뮤니티' },
-        { value: 'stay_review', label: '한 달 거주 후기' },
-      ],
-    },
-    budget: {
-      label: '한 달 예산은 어느 정도인가요? (항공권 제외)',
-      placeholder: '선택하세요',
-      options: [
-        { value: 'under_100', label: '100만 원 미만' },
-        { value: '100_150', label: '100~150만 원' },
-        { value: '150_200', label: '150~200만 원' },
-        { value: '200_300', label: '200~300만 원' },
-        { value: 'over_300', label: '300만 원 이상' },
-        { value: 'not_sure', label: '잘 모르겠음' },
-      ],
-    },
     consent: {
       label: '개인정보 수집·이용에 동의합니다',
       notice: [
-        '수집 항목: 이메일, 이름, 연령대, 설문 응답',
+        '수집 항목: 이메일, 성별, 연령대, 가 보고 싶은 곳',
         '이용 목적: 서비스 출시 안내, 수요 조사',
         '보유 기간: 서비스 출시 후 6개월 또는 동의를 철회할 때까지',
         '동의하지 않을 수 있으며, 이 경우 사전가입이 되지 않습니다.',

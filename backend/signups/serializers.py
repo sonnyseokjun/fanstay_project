@@ -5,32 +5,21 @@ from .models import PreRegistration
 
 class PreRegistrationSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(max_length=254, error_messages={"invalid": "invalid_email", "blank": "invalid_email"})
-    features = serializers.ListField(
-        child=serializers.ChoiceField(choices=list(PreRegistration.FEATURE_CHOICES)),
-        required=False,
-        max_length=len(PreRegistration.FEATURE_CHOICES),
-    )
 
     class Meta:
         model = PreRegistration
+        # 이름·설문 4개는 2026-09-24부터 받지 않는다(보내도 무시된다).
         fields = [
             "email",
-            "name",
+            "gender",
             "age_range",
             "countries",
-            "stay_type",
-            "timing",
-            "features",
-            "budget_range",
             "consent",
             "visitor_id",
         ]
 
     def validate_email(self, value):
         return value.strip().lower()
-
-    def validate_name(self, value):
-        return value.strip()
 
     def validate_consent(self, value):
         if value is not True:
@@ -39,6 +28,3 @@ class PreRegistrationSerializer(serializers.ModelSerializer):
 
     def validate_countries(self, value):
         return value.strip()
-
-    def validate_features(self, value):
-        return list(dict.fromkeys(value))

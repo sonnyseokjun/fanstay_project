@@ -1,18 +1,12 @@
-import type { FeatureCode } from '../content/types'
-
 // 프론트와 API는 같은 출처를 쓴다 (개발: Vite 프록시, 운영: Firebase Hosting이 /api를 Cloud Run으로 전달).
 // 다른 주소의 API를 써야 할 때만 빌드 시 VITE_API_BASE를 지정한다.
 export const API_BASE = (import.meta.env.VITE_API_BASE ?? '').replace(/\/$/, '')
 
 export type SignupPayload = {
   email: string
-  name: string
+  gender: string
   age_range: string
   countries: string
-  stay_type: string
-  timing: string
-  features: FeatureCode[]
-  budget_range: string
   consent: boolean
   visitor_id: string
 }

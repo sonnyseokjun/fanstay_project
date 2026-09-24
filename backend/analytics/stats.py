@@ -1,6 +1,5 @@
 """반응 요약 집계. `stats` 명령과 관리자 통계 화면이 함께 쓴다."""
 
-from collections import Counter
 from datetime import datetime, time, timedelta
 
 from django.db.models import Count
@@ -15,10 +14,6 @@ TREND_DAYS = 14
 
 def rate(part, whole):
     return f"{part / whole * 100:.1f}%" if whole else "-"
-
-
-def _ranked(counter, labels):
-    return [{"label": labels.get(code, code), "n": n} for code, n in counter.most_common()]
 
 
 def _choice_counts(signups, field, choices):
@@ -42,10 +37,6 @@ def summarize(days=None):
     clickers = cta_clicks.values("visitor_id").distinct().count()
     signup_count = signups.count()
 
-    features = Counter()
-    for row in signups.values("features"):
-        features.update(row["features"])
-
     return {
         "period": period,
         "visitors": visitors,
@@ -59,16 +50,13 @@ def summarize(days=None):
             {"label": row["label"] or "(없음)", "n": row["n"]}
             for row in cta_clicks.values("label").annotate(n=Count("id")).order_by("-n")
         ],
+        "genders": _choice_counts(signups, "gender", PreRegistration.Gender.choices),
         "age_ranges": _choice_counts(signups, "age_range", PreRegistration.AgeRange.choices),
         # 직접 입력 항목이라 같은 문자열끼리만 묶어 많이 적힌 순으로 보여 준다
         "countries": [
             {"label": row["countries"], "n": row["n"]}
             for row in signups.exclude(countries="").values("countries").annotate(n=Count("id")).order_by("-n")[:12]
         ],
-        "stay_types": _choice_counts(signups, "stay_type", PreRegistration.StayType.choices),
-        "timings": _choice_counts(signups, "timing", PreRegistration.Timing.choices),
-        "features": _ranked(features, PreRegistration.FEATURE_CHOICES),
-        "budgets": _choice_counts(signups, "budget_range", PreRegistration.Budget.choices),
     }
 
 

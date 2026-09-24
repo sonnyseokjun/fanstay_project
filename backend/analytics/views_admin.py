@@ -17,12 +17,9 @@ def stats_view(request):
 
     summary = summarize(days)
     survey = [
+        ("성별", summary["genders"]),
         ("연령대", summary["age_ranges"]),
-        ("가고 싶은 나라", summary["countries"]),
-        ("체류 형태", summary["stay_types"]),
-        ("이용 시기", summary["timings"]),
-        ("관심 기능", summary["features"]),
-        ("한 달 예산(항공권 제외)", summary["budgets"]),
+        ("가 보고 싶은 곳", summary["countries"]),
     ]
     context = {
         **admin.site.each_context(request),

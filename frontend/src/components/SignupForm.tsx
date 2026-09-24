@@ -1,7 +1,7 @@
 import { CaretDown } from '@phosphor-icons/react'
 import { useEffect, useId, useState, type FormEvent } from 'react'
 import { ko as t } from '../content/ko'
-import type { FeatureCode, Option } from '../content/types'
+import type { Option } from '../content/types'
 import { submitSignup, type SignupError, type SignupResult } from '../lib/api'
 import { getVisitorId } from '../lib/track'
 
@@ -16,13 +16,9 @@ export function SignupForm({ preselect, onDone }: { preselect: Preselect; onDone
   const uid = useId()
 
   const [email, setEmail] = useState('')
-  const [name, setName] = useState('')
+  const [gender, setGender] = useState('')
   const [age, setAge] = useState('')
   const [countries, setCountries] = useState('')
-  const [stayType, setStayType] = useState('')
-  const [timing, setTiming] = useState('')
-  const [features, setFeatures] = useState<FeatureCode[]>([])
-  const [budget, setBudget] = useState('')
   const [consent, setConsent] = useState(false)
   const [errors, setErrors] = useState<Errors>({})
   const [submitting, setSubmitting] = useState(false)
@@ -62,13 +58,9 @@ export function SignupForm({ preselect, onDone }: { preselect: Preselect; onDone
     try {
       const result = await submitSignup({
         email: email.trim(),
-        name: name.trim(),
+        gender,
         age_range: age,
         countries: countries.trim(),
-        stay_type: stayType,
-        timing,
-        features,
-        budget_range: budget,
         consent,
         visitor_id: getVisitorId(),
       })
@@ -133,21 +125,7 @@ export function SignupForm({ preselect, onDone }: { preselect: Preselect; onDone
         </div>
 
         <div className="form__row">
-          <div className="field">
-            <label className="field__label" htmlFor={`${uid}-name`}>
-              {s.name.label} <span className="tag">{s.optional}</span>
-            </label>
-            <input
-              id={`${uid}-name`}
-              className="input"
-              type="text"
-              maxLength={50}
-              autoComplete="nickname"
-              placeholder={s.name.placeholder}
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-            />
-          </div>
+          <SelectField id={`${uid}-gender`} label={s.gender.label} tag={s.optional} placeholder={s.gender.placeholder} options={s.gender.options} value={gender} onChange={setGender} />
           <SelectField id={`${uid}-age`} label={s.age.label} tag={s.optional} placeholder={s.age.placeholder} options={s.age.options} value={age} onChange={setAge} />
         </div>
 
@@ -169,15 +147,6 @@ export function SignupForm({ preselect, onDone }: { preselect: Preselect; onDone
             {s.countries.hint}
           </p>
         </div>
-
-        <fieldset className="form__survey">
-          <legend className="form__legend">{s.surveyLegend}</legend>
-          <p className="form__hint">{s.surveyIntro}</p>
-          <SelectField id={`${uid}-stay`} label={s.stayType.label} placeholder={s.stayType.placeholder} options={s.stayType.options} value={stayType} onChange={setStayType} />
-          <SelectField id={`${uid}-timing`} label={s.timing.label} placeholder={s.timing.placeholder} options={s.timing.options} value={timing} onChange={setTiming} />
-          <ChipGroup label={s.features.label} options={s.features.options} selected={features} onChange={setFeatures} />
-          <SelectField id={`${uid}-budget`} label={s.budget.label} placeholder={s.budget.placeholder} options={s.budget.options} value={budget} onChange={setBudget} />
-        </fieldset>
 
         <div className="consent">
           <label className="consent__label">
@@ -248,32 +217,5 @@ function SelectField(props: {
         <CaretDown className="select-wrap__caret" size={18} aria-hidden="true" />
       </div>
     </div>
-  )
-}
-
-function ChipGroup<T extends string>(props: {
-  label: string
-  tag?: string
-  options: Option<T>[]
-  selected: T[]
-  onChange: (next: T[]) => void
-}) {
-  const toggle = (value: T) =>
-    props.onChange(props.selected.includes(value) ? props.selected.filter((v) => v !== value) : [...props.selected, value])
-
-  return (
-    <fieldset className="field chips">
-      <legend className="field__label">
-        {props.label} {props.tag && <span className="tag">{props.tag}</span>}
-      </legend>
-      <div className="chips__list">
-        {props.options.map((option) => (
-          <label key={option.value} className="chip">
-            <input type="checkbox" checked={props.selected.includes(option.value)} onChange={() => toggle(option.value)} />
-            <span>{option.label}</span>
-          </label>
-        ))}
-      </div>
-    </fieldset>
   )
 }

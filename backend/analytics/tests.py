@@ -59,7 +59,7 @@ class AdminStatsViewTests(TestCase):
         Event.objects.create(event_type="cta_click", visitor_id="v1", label="hero")
         PreRegistration.objects.create(
             email="a@example.com", consent=True,
-            countries="태국, 일본", budget_range="150_200", stay_type="remote_work",
+            countries="제주, 일본", gender="female", age_range="30_34",
         )
         self.client.force_login(self.staff)
         res = self.client.get("/admin/stats/?days=7")
@@ -67,9 +67,9 @@ class AdminStatsViewTests(TestCase):
         s = res.context["s"]
         self.assertEqual((s["visitors"], s["cta_clicks"], s["signups"]), (2, 1, 1))
         self.assertEqual(s["signup_rate"], "50.0%")
-        self.assertContains(res, "태국")
-        self.assertContains(res, "150~200만 원")
-        self.assertContains(res, "원격근무·프리랜서")
+        self.assertContains(res, "제주, 일본")
+        self.assertContains(res, "여성")
+        self.assertContains(res, "30~34세")
 
     def test_ignores_unknown_period(self):
         self.client.force_login(self.staff)
