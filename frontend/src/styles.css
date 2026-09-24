@@ -540,7 +540,7 @@ select {
 .consent {
   display: grid;
   gap: 10px;
-  padding: 16px;
+  padding: 16px 14px;
   border-radius: var(--r-sm);
   background: var(--surface-2);
 }
@@ -562,13 +562,15 @@ select {
   accent-color: var(--accent);
 }
 
+/* 안내문은 들여쓰지 않고 박스 폭을 꽉 채운다 */
 .consent__notice {
   display: grid;
   gap: 2px;
-  padding-left: 30px;
+  margin-inline: -4px;
   color: var(--text-2);
-  font-size: 13px;
-  line-height: 1.55;
+  font-size: 12px;
+  line-height: 1.5;
+  letter-spacing: -0.01em;
 }
 
 /* ---------- 문제 공감 ---------- */
