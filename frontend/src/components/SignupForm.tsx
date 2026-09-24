@@ -1,3 +1,4 @@
+import { CaretDown } from '@phosphor-icons/react'
 import { useEffect, useId, useState, type FormEvent } from 'react'
 import { ko as t } from '../content/ko'
 import type { FeatureCode, Option } from '../content/types'
@@ -84,12 +85,12 @@ export function SignupForm({ preselect, onDone }: { preselect: Preselect; onDone
   }
 
   return (
-    <section className="section signup" id="signup" aria-labelledby="signup-title">
+    <section className="signup" id="signup" aria-labelledby="signup-title">
       <div className="signup__head">
-        <h2 id="signup-title" className="section__title">
+        <h2 id="signup-title" className="signup__title">
           {s.title}
         </h2>
-        <p className="section__intro">{s.intro}</p>
+        <p className="signup__intro">{s.intro}</p>
         {s.benefits.length > 0 && (
           <div className="signup__benefits">
             <h3>{s.benefitsTitle}</h3>
@@ -213,7 +214,7 @@ export function SignupForm({ preselect, onDone }: { preselect: Preselect; onDone
           </p>
         )}
 
-        <button type="submit" className="button button--block" disabled={submitting}>
+        <button type="submit" className="button button--block button--large" disabled={submitting}>
           {submitting ? s.submitting : s.submit}
         </button>
       </form>
@@ -235,14 +236,17 @@ function SelectField(props: {
       <label className="field__label" htmlFor={props.id}>
         {props.label} {props.tag && <span className="tag">{props.tag}</span>}
       </label>
-      <select id={props.id} className="input select" value={props.value} onChange={(e) => props.onChange(e.target.value)}>
-        <option value="">{props.placeholder}</option>
-        {props.options.map((option) => (
-          <option key={option.value} value={option.value}>
-            {option.label}
-          </option>
-        ))}
-      </select>
+      <div className="select-wrap">
+        <select id={props.id} className="input select" value={props.value} onChange={(e) => props.onChange(e.target.value)}>
+          <option value="">{props.placeholder}</option>
+          {props.options.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </select>
+        <CaretDown className="select-wrap__caret" size={18} aria-hidden="true" />
+      </div>
     </div>
   )
 }

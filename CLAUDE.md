@@ -22,8 +22,8 @@ hanstay_project/
 ├── frontend/                React 19 + TypeScript + Vite (원페이지 랜딩, 한국어)
 │   └── src/
 │       ├── content/         화면 문구 전부 (ko.ts, 구조는 types.ts)
-│       ├── components/      섹션별 컴포넌트 (Hero, Problems, Solution, Features, Flow, Pricing, SignupForm, Faq, ThankYou)
-│       ├── illustrations/   StayCalendar(히어로 달력), icons
+│       ├── components/      섹션별 컴포넌트 (Hero(+SignupForm), Problems, Solution, Features, Flow, Pricing, Faq, ThankYou)
+│       ├── assets/photos/   사진(WebP). 출처·라이선스는 CREDITS.md
 │       ├── lib/             api.ts(가입 API), track.ts(자체 반응 측정), pixel.ts(메타 픽셀)
 │       └── styles.css       디자인 토큰과 전체 스타일
 └── backend/                 Django 5.2 + DRF
@@ -77,13 +77,18 @@ Windows 콘솔에서 한글 출력이 깨지면 `PYTHONIOENCODING=utf-8`을 앞�
 - 가격 예시는 추정치다. 화면에 추정치임을 밝히는 문구(`pricing.note`)를 지우지 않는다.
 
 ### 디자인
-- 디자인 작업에는 `frontend-design` 스킬(`.claude/skills/frontend-design`)을 따른다.
-- 컨셉은 **"한 달 체류 달력"**이다. 토큰은 `styles.css` 맨 위 `:root`에 있다. 새 색을 즉흥적으로 추가하지 않는다.
-- 색: 남색 `--ink`(글자·버튼), 형광 노랑 `--marker`(강조), `--paper`/`--sheet`(배경·종이 면), `--grid`(선), `--sea`(링크·포커스).
-- 강조는 형광펜(`--marker`) 하나로만 한다: 달력의 체류 기간, 선택된 칩, 비교표의 팬스테이 행, 합계 금액, 대기 순번.
-- 글꼴: 제목 `Gowun Batang`, 본문 `Pretendard`(둘 다 npm 번들). 번호는 실제 순서가 있는 이용 흐름에만 쓴다.
-- 자동 애니메이션은 히어로 달력의 형광펜 칠하기 하나뿐이다. 섹션 등장 효과를 넣지 않는다. `prefers-reduced-motion`을 지킨다.
-- 모바일 우선. 변경 후 390px과 1440px 폭에서 가로 스크롤이 생기지 않는지 확인한다.
+- 디자인 작업에는 `design-taste-frontend` 스킬(`.claude/skills/design-taste-frontend`, AI가 만든 티가 나는 패턴 금지 목록)을 따른다.
+- 방향: **사진 중심의 차분한 여행 준비 도구.** 사전가입 폼은 첫 화면(히어로 오른쪽, 모바일은 제목 바로 아래)에 있다.
+- 토큰은 `styles.css` 맨 위 `:root`에 있다. 다크 모드 값은 기기 설정용(`prefers-color-scheme`)과 전환 버튼용(`[data-theme='dark']`) 두 곳에 같은 값으로 있으니 함께 고친다. 새 색을 즉흥적으로 추가하지 않는다.
+- 헤더의 라이트/다크 전환 버튼(`ThemeToggle`)은 선택을 브라우저의 `localStorage`(`fanstay.theme`)에만 저장한다. 저장값이 없으면 기기 설정을 따른다.
+- 강조색은 `--accent`(번트 오렌지) 하나다: 버튼, 필수 표시, 선택된 칩, 비교표의 팬스테이 행, 합계 금액, 대기 순번. 옅은 면은 `--accent-soft`.
+- 글꼴은 `Pretendard` 하나(npm 번들). 명조·세리프를 쓰지 않는다.
+- 모서리: 입력·버튼 10px(`--r-sm`), 카드·사진 18px(`--r-lg`), 칩만 알약형.
+- 아이콘은 `@phosphor-icons/react`만 쓴다. SVG 아이콘·그림을 직접 그리지 않는다.
+- 사진은 라이선스를 확인한 것만 `assets/photos/`에 WebP로 넣고 `CREDITS.md`에 적는다. CC BY 사진은 푸터(`footer.photoCredit`)에 작가를 표시한다.
+- 금지: 긴 대시(—, –), 섹션 제목 위 작은 영문 라벨(eyebrow), 섹션 번호, 스크롤 안내 문구, 같은 모양 카드 3개 나열. 번호는 실제 순서가 있는 이용 흐름·에스크로 단계에만 쓴다.
+- 움직임은 버튼·칩 hover/active 전환과 FAQ 아이콘 회전뿐이다. 섹션 등장 효과를 넣지 않는다. `prefers-reduced-motion`을 지킨다.
+- 모바일 우선. 변경 후 390px과 1440px 폭, 라이트·다크 모드에서 가로 스크롤이 생기지 않는지 확인한다.
 
 ### 측정과 개인정보
 - 자체 수집(`track.ts`)은 방문과 버튼 클릭만 기록하고 개인정보를 저장하지 않는다.

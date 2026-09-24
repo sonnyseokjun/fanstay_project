@@ -1,3 +1,4 @@
+import { IconContext } from '@phosphor-icons/react'
 import { useEffect, useState } from 'react'
 import { Faq } from './components/Faq'
 import { Features } from './components/Features'
@@ -7,7 +8,7 @@ import { Header } from './components/Header'
 import { Hero } from './components/Hero'
 import { Pricing } from './components/Pricing'
 import { Problems } from './components/Problems'
-import { SignupForm, type Preselect } from './components/SignupForm'
+import type { Preselect } from './components/SignupForm'
 import { Solution } from './components/Solution'
 import { ThankYou } from './components/ThankYou'
 import { ko as t } from './content/ko'
@@ -17,6 +18,9 @@ import { initPixel, trackLead } from './lib/pixel'
 import { track } from './lib/track'
 
 let pageViewSent = false
+
+// 아이콘은 Phosphor 한 종류만 쓰고 굵기를 통일한다.
+const ICONS = { size: 22, weight: 'regular' as const }
 
 export default function App() {
   const [result, setResult] = useState<SignupResult | null>(null)
@@ -39,7 +43,11 @@ export default function App() {
 
   const scrollToSignup = () => {
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    document.getElementById('signup')?.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' })
+    const form = document.getElementById('signup')
+    if (!form) return
+    // 고정 헤더(64px)에 가리지 않도록 조금 위에서 멈춘다.
+    const top = form.getBoundingClientRect().top + window.scrollY - 80
+    window.scrollTo({ top: Math.max(0, top), behavior: reduce ? 'auto' : 'smooth' })
   }
 
   const handleCta = (label: string) => {
@@ -73,7 +81,7 @@ export default function App() {
   }
 
   return (
-    <>
+    <IconContext.Provider value={ICONS}>
       <a className="skip-link" href="#signup">
         {t.header.skipToForm}
       </a>
@@ -82,17 +90,16 @@ export default function App() {
         <ThankYou result={result} onBack={goHome} />
       ) : (
         <main>
-          <Hero onCta={() => handleCta('hero')} />
+          <Hero preselect={preselect} onDone={handleDone} />
           <Problems />
           <Solution />
           <Features />
           <Flow />
           <Pricing onChoose={handleChooseCity} />
-          <SignupForm preselect={preselect} onDone={handleDone} />
           <Faq />
         </main>
       )}
       <Footer />
-    </>
+    </IconContext.Provider>
   )
 }

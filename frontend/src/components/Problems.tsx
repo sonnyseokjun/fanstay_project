@@ -14,12 +14,12 @@ export function Problems() {
             </p>
             <div className="problem__body">
               <h3 className="problem__title">{item.title}</h3>
-              <p>{item.body}</p>
-              <blockquote className="problem__evidence">
-                <p>{item.evidence}</p>
-                <cite>{item.source}</cite>
-              </blockquote>
+              <p className="problem__text">{item.body}</p>
             </div>
+            <blockquote className="problem__evidence">
+              <p>{item.evidence}</p>
+              <cite>{item.source}</cite>
+            </blockquote>
           </li>
         ))}
       </ul>
