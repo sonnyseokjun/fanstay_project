@@ -27,7 +27,7 @@ export function SignupForm({ preselect, onDone }: { preselect: Preselect; onDone
   const [errors, setErrors] = useState<Errors>({})
   const [submitting, setSubmitting] = useState(false)
 
-  // 가격 예시의 "이 도시로 사전가입" 버튼을 누르면 그 나라를 입력란에 채워 둔다.
+  // 가격 예시의 "이 도시로 사전가입" 버튼을 누르면 그곳(제주·일본 등)을 입력란에 채워 둔다.
   useEffect(() => {
     if (!preselect) return
     setCountries((prev) => {

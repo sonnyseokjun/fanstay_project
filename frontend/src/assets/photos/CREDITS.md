@@ -7,6 +7,6 @@
 | hero.webp | https://commons.wikimedia.org/wiki/File:Coffee_table_corner_in_a_London_apartment_(Unsplash).jpg | Alexander Pemberton | CC0 |
 | chiangmai.webp | https://commons.wikimedia.org/wiki/File:Latte_Art_Chiang_Mai_(Unsplash).jpg | Waranya Mooldee | CC0 |
 | danang.webp | https://commons.wikimedia.org/wiki/File:Beach_Table_Da_Nang_(Unsplash_UoqAR2pOxMo).jpg | Link Hoang | CC0 |
-| bali.webp | https://commons.wikimedia.org/wiki/File:Wandering_in_Bali_(Unsplash).jpg | Jamie Fenn | CC0 |
+| jeju.webp | https://commons.wikimedia.org/wiki/File:Yongmeori_Coast.jpg | Bernard Gagnon | CC0 |
 | fukuoka.webp | https://commons.wikimedia.org/wiki/File:Yatai_2015_(18138578523).jpg | Thomas Au | CC BY 2.0 (표시 필요) |
 | remote.webp | https://commons.wikimedia.org/wiki/File:Writer_at_work_(Unsplash).jpg | Juliette Leufke | CC0 |
