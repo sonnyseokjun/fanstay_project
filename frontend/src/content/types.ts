@@ -4,16 +4,6 @@
 export type Option<T extends string = string> = { value: T; label: string }
 
 export type CountryCode = 'korea' | 'japan' | 'thailand' | 'vietnam'
-export type FeatureCode =
-  | 'monthly_stay'
-  | 'escrow'
-  | 'city_match'
-  | 'cost_estimate'
-  | 'checklist'
-  | 'infra_map'
-  | 'community'
-  | 'stay_review'
-
 export type Content = {
   meta: { title: string; description: string }
   header: { home: string; cta: string; skipToForm: string; toLight: string; toDark: string }
@@ -74,15 +64,9 @@ export type Content = {
     required: string
     optional: string
     email: { label: string; placeholder: string }
-    name: { label: string; placeholder: string }
+    gender: { label: string; placeholder: string; options: Option[] }
     age: { label: string; placeholder: string; options: Option[] }
     countries: { label: string; placeholder: string; hint: string }
-    surveyLegend: string
-    surveyIntro: string
-    stayType: { label: string; placeholder: string; options: Option[] }
-    timing: { label: string; placeholder: string; options: Option[] }
-    features: { label: string; options: Option<FeatureCode>[] }
-    budget: { label: string; placeholder: string; options: Option[] }
     consent: { label: string; notice: string[] }
     submit: string
     submitting: string

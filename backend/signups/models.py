@@ -5,7 +5,15 @@ class PreRegistration(models.Model):
     """사전가입 1건. 이메일과 동의만 필수, 나머지는 모두 선택.
 
     선택지 코드는 frontend/src/content/ko.ts의 value와 같아야 한다.
+    2026-09-24부터 폼에서 받는 항목: 이메일, 성별, 연령대, 가 보고 싶은 곳, 동의.
+    이름과 설문 4개(체류 형태·이용 시기·관심 기능·한 달 예산)는 받지 않지만,
+    이미 저장된 답을 지우지 않으려고 칸은 남겨 둔다.
     """
+
+    class Gender(models.TextChoices):
+        FEMALE = "female", "여성"
+        MALE = "male", "남성"
+        NO_ANSWER = "no_answer", "밝히지 않음"
 
     class AgeRange(models.TextChoices):
         UNDER_20 = "under_20", "20세 미만"
@@ -51,9 +59,12 @@ class PreRegistration(models.Model):
     }
 
     email = models.EmailField("이메일", max_length=254, unique=True)
-    name = models.CharField("이름", max_length=50, blank=True)
+    gender = models.CharField("성별", max_length=20, choices=Gender.choices, blank=True)
     age_range = models.CharField("연령대", max_length=20, choices=AgeRange.choices, blank=True)
-    countries = models.CharField("가 보고 싶은 나라", max_length=100, blank=True)
+    countries = models.CharField("가 보고 싶은 곳", max_length=100, blank=True)
+
+    # 2026-09-24 수집 중단. 이전 가입자의 답을 보존하는 용도.
+    name = models.CharField("이름", max_length=50, blank=True)
     stay_type = models.CharField("체류 형태", max_length=20, choices=StayType.choices, blank=True)
     timing = models.CharField("이용 시기", max_length=20, choices=Timing.choices, blank=True)
     features = models.JSONField("관심 기능", default=list, blank=True)
